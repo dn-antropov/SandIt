@@ -1,0 +1,10 @@
+[configuration]
+
+entry_symbol = "granularsimulation_library_init"
+compatibility_minimum = "4.3"
+reloadable = true
+
+[libraries]
+
+windows.x86_64 = "res://bin/granularsimulation/libgdgransim.windows.template_debug.x86_64.dll"
+

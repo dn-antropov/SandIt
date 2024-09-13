@@ -1,3 +1,12 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+*.dll
+*.exp
+*.lib
+*.obj
+
+.sconsign.dblite
+
+.vscode/

@@ -1,6 +1,25 @@
-[gd_scene format=3 uid="uid://bhsi3wabmvqrh"]
+[gd_scene load_steps=4 format=3 uid="uid://btqdrnr04bjyy"]
 
-[node name="Node2D" type="Node2D"]
+[ext_resource type="Script" path="res://scripts/Main.cs" id="1_woup2"]
+[ext_resource type="Script" path="res://scripts/ui/RenderSim.cs" id="2_nplto"]
+[ext_resource type="Script" path="res://scripts/ui/Painter.cs" id="3_vg588"]
 
-[node name="Camera2D" type="Camera2D" parent="."]
-anchor_mode = 0
+[node name="Main" type="Node"]
+script = ExtResource("1_woup2")
+
+[node name="RenderSim" type="TextureRect" parent="."]
+texture_filter = 1
+offset_right = 1024.0
+offset_bottom = 1024.0
+script = ExtResource("2_nplto")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UI" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1024.0
+offset_bottom = 1024.0
+
+[node name="Painter" type="Node" parent="."]
+script = ExtResource("3_vg588")
