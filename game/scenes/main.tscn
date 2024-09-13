@@ -23,3 +23,7 @@ offset_bottom = 1024.0
 
 [node name="Painter" type="Node" parent="."]
 script = ExtResource("3_vg588")
+
+[node name="Outline" type="Line2D" parent="."]
+closed = true
+width = 1.0

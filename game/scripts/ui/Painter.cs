@@ -25,7 +25,7 @@ public partial class Painter : Node
 	}
 
 	private void DrawCircle(Vector2 position, int radius) {
-		Vector2I position_i = new Vector2I((int)position.X, (int)position.Y);
+		Vector2I position_i = new Vector2I((int)position.Y, (int)position.X);
 		if (Common.main.IsInBounds(position_i)) {
 			for (int row = -radius; row <= radius + 1; row++) {
 				for (int col = -radius; col <= radius + 1; col++) {

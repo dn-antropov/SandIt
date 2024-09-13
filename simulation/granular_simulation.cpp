@@ -4,6 +4,8 @@
 #include "particles/basic/nothing.h"
 #include "particles/basic/sand.h"
 
+#include "./thirdparty/cpp-marching-squares/MarchingSquares.h"
+
 using namespace godot;
 
 GranularSimulation::GranularSimulation() {
@@ -25,6 +27,7 @@ void GranularSimulation::initialize_grid(std::vector<Particle*> *ps) {
 }
 
 void GranularSimulation::step(int iterations) {
+    // UtilityFunctions::print("==New Iteration=========================================");
     for (int i = 0; i < iterations; i++) {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
@@ -38,6 +41,24 @@ void GranularSimulation::step(int iterations) {
             }
         }
     }
+    unsigned char* data = new unsigned char[width * height];
+    for (int id = 0; id < width * height; id++) {
+        data[id] = particles[id]->get_density()>0 ? 1 : 0;
+    }
+    MarchingSquares::Result r = MarchingSquares::FindPerimeter(width, height, data);
+    
+    // UtilityFunctions::print(r.initialX, " ", r.initialY);
+    int prevX = r.initialY;
+    int prevY = r.initialX;
+    outline.resize(size(r.directions));
+    // UtilityFunctions::print(prevX, " ", prevY);
+    for (int dI = 0; dI < size(r.directions); dI++) {
+        prevX = prevX - r.directions[dI].y;
+        prevY = prevY + r.directions[dI].x;
+
+        outline.set(dI, Vector2(prevX, prevY));
+    }
+
 }
 
 
@@ -103,10 +124,15 @@ PackedByteArray GranularSimulation::get_render_data() {
     return render_data;
 }
 
+PackedVector2Array GranularSimulation::get_outline() {
+    return outline;
+}
+
 void GranularSimulation::_bind_methods() {
     ClassDB::bind_method(D_METHOD("step"), &GranularSimulation::step);
     ClassDB::bind_method(D_METHOD("draw_particle"), &GranularSimulation::draw_particle);
     ClassDB::bind_method(D_METHOD("get_dimensions"), &GranularSimulation::get_dimensions);
     ClassDB::bind_method(D_METHOD("get_render_data"), &GranularSimulation::get_render_data);
+    ClassDB::bind_method(D_METHOD("get_outline"), &GranularSimulation::get_outline);
     ClassDB::bind_method(D_METHOD("is_in_bounds"), &GranularSimulation::is_in_bounds);
 }

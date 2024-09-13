@@ -3,8 +3,9 @@ using System;
 
 public partial class Main : Node
 {
-	int i = 0;
+	int counter = 0;
 	Variant simulation;
+	Vector2[] outline;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -14,7 +15,24 @@ public partial class Main : Node
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		// if (counter < 1) {
+		// 	counter++;
+		// 	Draw(new Vector2I(99,10));
+		// 	Draw(new Vector2I(99,11));
+		// 	Draw(new Vector2I(100,10));
+		// 	Draw(new Vector2I(100,11));
+		// 	Draw(new Vector2I(101,10));
+		// 	Draw(new Vector2I(101,11));
+		// }
 		Step(1);
+		outline = simulation.AsGodotObject().Call("get_outline").AsVector2Array();
+		Vector2[] mappedOutline = new Vector2[outline.Length];
+		int i = 0;
+		foreach (Vector2 position in outline) {
+			mappedOutline[i] = new Vector2(position.Y * Common.pixelScale, position.X * Common.pixelScale);
+			i++;
+		}
+		Common.outline.Points = mappedOutline;
 	}
 
 	public Vector2I GetDimensions() {
@@ -28,12 +46,12 @@ public partial class Main : Node
 	}
 
 	public bool IsInBounds(Vector2I position) {
-		bool isInBounds = simulation.AsGodotObject().Call("is_in_bounds", position.Y, position.X).AsBool();
+		bool isInBounds = simulation.AsGodotObject().Call("is_in_bounds", position.X, position.Y).AsBool();
 		return isInBounds;
 	}
 
 	public void Draw(Vector2I position) {
-		simulation.AsGodotObject().Call("draw_particle", position.Y, position.X, 0);
+		simulation.AsGodotObject().Call("draw_particle", position.X, position.Y, 0);
 	}
 
 	public void Step(int iterations) {

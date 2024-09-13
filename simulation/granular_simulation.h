@@ -13,6 +13,7 @@ class GranularSimulation : public RefCounted {
 private:
 	std::vector<Particle*> particles;
 	PackedByteArray render_data;
+	PackedVector2Array outline;
 
 public:
 	unsigned int g_seed = 12345;
@@ -40,5 +41,6 @@ public:
 
 //API
 	Vector2i get_dimensions();
+	PackedVector2Array get_outline();
 	PackedByteArray get_render_data();
 };
