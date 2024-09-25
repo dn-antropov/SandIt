@@ -27,3 +27,9 @@ script = ExtResource("3_vg588")
 [node name="Outline" type="Line2D" parent="."]
 closed = true
 width = 1.0
+default_color = Color(1, 0, 0, 1)
+
+[node name="Outline_Simplified" type="Line2D" parent="."]
+closed = true
+width = 1.0
+default_color = Color(0, 1, 0, 1)

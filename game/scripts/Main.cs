@@ -6,6 +6,7 @@ public partial class Main : Node
 	int counter = 0;
 	Variant simulation;
 	Vector2[] outline;
+	Vector2[] outline_simplified;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -25,15 +26,21 @@ public partial class Main : Node
 		// 	Draw(new Vector2I(101,11));
 		// }
 		Step(1);
-		//outline = simulation.AsGodotObject().Call("get_outline").AsVector2Array();
-		outline = simulation.AsGodotObject().Call("get_simplified_outline").AsVector2Array();
+		outline = simulation.AsGodotObject().Call("get_outline").AsVector2Array();
+		outline_simplified = simulation.AsGodotObject().Call("get_simplified_outline").AsVector2Array();
+
+		Common.outline.Points = MapOutline(outline);
+		Common.outline_simplified.Points = MapOutline(outline_simplified);
+	}
+
+	Vector2[] MapOutline(Vector2[] outline) {
 		Vector2[] mappedOutline = new Vector2[outline.Length];
 		int i = 0;
 		foreach (Vector2 position in outline) {
 			mappedOutline[i] = new Vector2(position.Y * Common.pixelScale, position.X * Common.pixelScale);
 			i++;
 		}
-		Common.outline.Points = mappedOutline;
+		return mappedOutline;
 	}
 
 	public Vector2I GetDimensions() {
