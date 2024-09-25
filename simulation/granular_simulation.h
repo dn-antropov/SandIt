@@ -1,3 +1,7 @@
+/*
+	Based on https://github.com/kiwijuice56/sand-slide
+*/
+
 #pragma once
 
 #include <godot_cpp/classes/ref.hpp>
