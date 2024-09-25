@@ -45,6 +45,6 @@ public:
 //API
 	Vector2i get_dimensions();
 	PackedVector2Array get_outline();
-	PackedVector2Array get_simplified_outline(Result result);
+	PackedVector2Array get_simplified_outline();
 	PackedByteArray get_render_data();
 };

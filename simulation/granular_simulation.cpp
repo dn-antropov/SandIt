@@ -5,8 +5,7 @@
 #include "particles/basic/nothing.h"
 #include "particles/basic/sand.h"
 
-#include "./thirdparty/douglas-peucker/polygon-simplify.hh"
-
+#include "./thirdparty/douglas-peucker/polygon-simplify.h"
 
 using namespace godot;
 
@@ -60,7 +59,6 @@ void GranularSimulation::step(int iterations) {
 
         outline.set(dI, Vector2(prevX, prevY));
     }
-
 }
 
 
@@ -130,17 +128,15 @@ PackedVector2Array GranularSimulation::get_outline() {
     return outline;
 }
 
-PackedVector2Array GranularSimulation::get_simplified_outline(MarchingSquares::Result result) {
-    PackedVector2Array worldMesh;
-    
+PackedVector2Array GranularSimulation::get_simplified_outline() {
     PackedVector2Array simplified_outline;
-    simplified_outline.resize(size(result.directions));
+    //simplified_outline.resize(size(result.directions));
 
-    float lastX = (float)result.initialX;
-    float lastY = (float)result.initialY;
-    // for(int i = 0; i < result.directions.size(); i++) {
+    // float lastX = (float)result.initialX;
+    // float lastY = (float)result.initialY;
 
-    // }
+    simplified_outline = DouglasPeucker::simplify(outline, 1);
+
     return simplified_outline;
 }
 
@@ -150,5 +146,6 @@ void GranularSimulation::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_dimensions"), &GranularSimulation::get_dimensions);
     ClassDB::bind_method(D_METHOD("get_render_data"), &GranularSimulation::get_render_data);
     ClassDB::bind_method(D_METHOD("get_outline"), &GranularSimulation::get_outline);
+    ClassDB::bind_method(D_METHOD("get_simplified_outline"), &GranularSimulation::get_simplified_outline);
     ClassDB::bind_method(D_METHOD("is_in_bounds"), &GranularSimulation::is_in_bounds);
 }

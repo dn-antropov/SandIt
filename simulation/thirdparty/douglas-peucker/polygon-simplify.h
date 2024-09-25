@@ -14,11 +14,12 @@ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEM
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+#pragma once
 
 #include <assert.h>
 #include <vector>
-
 #include <godot_cpp/classes/ref.hpp>
+
 using namespace godot;
 
 // #include <box2d/b2_math.h>
@@ -27,14 +28,14 @@ using namespace godot;
 
 /* Polyline Simplification Algorithm */
 class DouglasPeucker {
-public:
-	//static void simplify_section(const std::vector<b2Vec2>& pts,
-	static void simplify_section(const PackedVector2Array& pts,
-		float tolerance,
-		size_t i, size_t j,
-		std::vector<bool>* mark_map,
-		size_t omitted = 0);
-	//static std::vector<b2Vec2> simplify(const std::vector<b2Vec2>& vertices, float tolerance);
-	static PackedVector2Array simplify(const PackedVector2Array& vertices, float tolerance);
-	static float pDistance(float x, float y, float x1, float y1, float x2, float y2);
+	public:
+		//static void simplify_section(const std::vector<b2Vec2>& pts,
+		static void simplify_section(const PackedVector2Array& pts,
+			float tolerance,
+			size_t i, size_t j,
+			std::vector<bool>* mark_map,
+			size_t omitted = 0);
+		//static std::vector<b2Vec2> simplify(const std::vector<b2Vec2>& vertices, float tolerance);
+		static PackedVector2Array simplify(const PackedVector2Array& vertices, float tolerance);
+		static float pDistance(float x, float y, float x1, float y1, float x2, float y2);
 };

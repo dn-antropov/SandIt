@@ -25,7 +25,8 @@ public partial class Main : Node
 		// 	Draw(new Vector2I(101,11));
 		// }
 		Step(1);
-		outline = simulation.AsGodotObject().Call("get_outline").AsVector2Array();
+		//outline = simulation.AsGodotObject().Call("get_outline").AsVector2Array();
+		outline = simulation.AsGodotObject().Call("get_simplified_outline").AsVector2Array();
 		Vector2[] mappedOutline = new Vector2[outline.Length];
 		int i = 0;
 		foreach (Vector2 position in outline) {
