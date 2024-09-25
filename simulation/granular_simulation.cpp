@@ -1,10 +1,12 @@
 #include "granular_simulation.h"
 #include <godot_cpp/variant/utility_functions.hpp>
+#include <vector>
 
 #include "particles/basic/nothing.h"
 #include "particles/basic/sand.h"
 
-#include "./thirdparty/cpp-marching-squares/MarchingSquares.h"
+#include "./thirdparty/douglas-peucker/polygon-simplify.hh"
+
 
 using namespace godot;
 
@@ -126,6 +128,20 @@ PackedByteArray GranularSimulation::get_render_data() {
 
 PackedVector2Array GranularSimulation::get_outline() {
     return outline;
+}
+
+PackedVector2Array GranularSimulation::get_simplified_outline(MarchingSquares::Result result) {
+    PackedVector2Array worldMesh;
+    
+    PackedVector2Array simplified_outline;
+    simplified_outline.resize(size(result.directions));
+
+    float lastX = (float)result.initialX;
+    float lastY = (float)result.initialY;
+    // for(int i = 0; i < result.directions.size(); i++) {
+
+    // }
+    return simplified_outline;
 }
 
 void GranularSimulation::_bind_methods() {

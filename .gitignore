@@ -10,4 +10,4 @@ game/addons
 
 .sconsign.dblite
 
-.vscode/
+.vscode/settings.json

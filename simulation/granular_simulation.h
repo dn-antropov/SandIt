@@ -4,7 +4,10 @@
 #include <godot_cpp/variant/vector2i.hpp>
 #include "./particles/particle.h"
 
+#include "./thirdparty/cpp-marching-squares/MarchingSquares.h"
+
 using namespace godot;
+using namespace MarchingSquares;
 
 class GranularSimulation : public RefCounted {
 	GDCLASS(GranularSimulation, RefCounted)
@@ -42,5 +45,6 @@ public:
 //API
 	Vector2i get_dimensions();
 	PackedVector2Array get_outline();
+	PackedVector2Array get_simplified_outline(Result result);
 	PackedByteArray get_render_data();
 };

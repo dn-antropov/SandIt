@@ -21,7 +21,8 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 
 /* Polyline Simplification Algorithm */
 
-void DouglasPeucker::simplify_section(const std::vector<b2Vec2>& pts,
+//void DouglasPeucker::simplify_section(const std::vector<b2Vec2>& pts,
+void DouglasPeucker::simplify_section(const PackedVector2Array& pts,
 	float tolerance,
 	size_t i, size_t j,
 	std::vector<bool>* mark_map,
@@ -61,13 +62,15 @@ void DouglasPeucker::simplify_section(const std::vector<b2Vec2>& pts,
 }
 
 
-std::vector<b2Vec2> DouglasPeucker::simplify(const std::vector<b2Vec2>& vertices, float tolerance)
+//std::vector<b2Vec2> DouglasPeucker::simplify(const std::vector<b2Vec2>& vertices, float tolerance)
+PackedVector2Array DouglasPeucker::simplify(const PackedVector2Array& vertices, float tolerance)
 {
 	std::vector<bool> mark_map(vertices.size(), true);
 
 	simplify_section(vertices, tolerance, 0, vertices.size() - 1, &mark_map);
 
-	std::vector<b2Vec2> result;
+	//std::vector<b2Vec2> result;
+	PackedVector2Array result;
 	for (size_t i = 0; i != vertices.size(); ++i) {
 		if (mark_map[i]) {
 			result.push_back(vertices[i]);
