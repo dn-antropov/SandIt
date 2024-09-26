@@ -31,6 +31,7 @@ public partial class Main : Node
 
 		Common.outline.Points = MapOutline(outline);
 		Common.outline_simplified.Points = MapOutline(outline_simplified);
+		Common.sand_pile_collider.Polygon = MapOutline(outline_simplified);
 	}
 
 	Vector2[] MapOutline(Vector2[] outline) {
