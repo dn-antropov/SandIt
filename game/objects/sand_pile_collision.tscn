@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://cdrgekfejahkp"]
+
+[node name="SandPileCollision" type="Node2D"]
+
+[node name="Outline_Pile" type="Line2D" parent="."]
+closed = true
+width = 1.0
+default_color = Color(1, 0, 0, 1)
+
+[node name="Outline_Collision" type="Line2D" parent="."]
+closed = true
+width = 1.0
+default_color = Color(0, 1, 0, 1)
+
+[node name="StaticBody" type="StaticBody2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody"]
+build_mode = 1

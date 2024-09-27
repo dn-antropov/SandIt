@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://scripts/ui/RenderSim.cs" id="2_nplto"]
 [ext_resource type="Script" path="res://scripts/ui/Painter.cs" id="3_vg588"]
 [ext_resource type="Script" path="res://scripts/world/objects/ball/Ball.cs" id="4_5j2cn"]
-[ext_resource type="PhysicsMaterial" uid="uid://dqmsaxkf7hgl5" path="res://game_objects/ball/pm_ball.tres" id="4_qhdeu"]
+[ext_resource type="PhysicsMaterial" uid="uid://dqmsaxkf7hgl5" path="res://objects/ball/pm_ball.tres" id="4_qhdeu"]
 [ext_resource type="Shape2D" uid="uid://c47r2kahqii6n" path="res://scenes/main/SegmenShape2D_HorizontalBorder.tres" id="5_6fepg"]
 [ext_resource type="Shape2D" uid="uid://blyg2jm3w65kl" path="res://scenes/main/SegmenShape2D_VerticalBorder.tres" id="6_4lljf"]
 
@@ -29,18 +29,6 @@ offset_bottom = 1024.0
 
 [node name="Painter" type="Node" parent="."]
 script = ExtResource("3_vg588")
-
-[node name="Outline" type="Line2D" parent="."]
-visible = false
-closed = true
-width = 1.0
-default_color = Color(1, 0, 0, 1)
-
-[node name="Outline_Simplified" type="Line2D" parent="."]
-visible = false
-closed = true
-width = 1.0
-default_color = Color(0, 1, 0, 1)
 
 [node name="RigidBody2D_BouncyBall" type="RigidBody2D" parent="."]
 position = Vector2(512, 64)
@@ -75,8 +63,3 @@ position = Vector2(1024, 0)
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D_RightWall"]
 shape = ExtResource("6_4lljf")
-
-[node name="StaticBody2D_SandPile" type="StaticBody2D" parent="."]
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D_SandPile"]
-build_mode = 1
