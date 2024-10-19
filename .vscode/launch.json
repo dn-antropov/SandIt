@@ -46,6 +46,21 @@
             ]
         },
         {
+            "name": "Debug CPP",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "preLaunchTask": "scons",
+            "program": "${env:GODOT4}",
+            "cwd": "${workspaceFolder}/game",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "environment": [],
+            "args": [
+                "--path",
+                "${workspaceRoot}/game"
+            ]
+        },
+        {
             "name": "Attach",
             "type": "coreclr",
             "request": "attach"

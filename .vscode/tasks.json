@@ -19,6 +19,24 @@
                 "reveal": "silent"
             },
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "scons",
+            "group": "build",
+            "type": "shell",
+            "command": "scons",
+            "args": [
+                // enable for debugging with breakpoints
+                "dev_build=yes",
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "buildwithscons",
+            "dependsOn": [
+                "scons",
+                "build"
+            ]
         }
     ]
 }

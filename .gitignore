@@ -7,6 +7,8 @@ game/addons
 *.exp
 *.lib
 *.obj
+*.pdb
+*.ilk
 
 .sconsign.dblite
 
