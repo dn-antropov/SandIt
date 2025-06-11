@@ -20,7 +20,10 @@ class GranularSimulation : public RefCounted {
 private:
 	std::vector<Particle*> particles;
 	PackedByteArray render_data;
-	PackedVector2Array outline;
+	// PackedVector2Array outline;
+	// PackedVector2Array simplified_outline;
+	TypedArray<PackedVector2Array> outlines;
+	TypedArray<PackedVector2Array> simplified_outlines;
 
 public:
 	unsigned int g_seed = 12345;
@@ -46,9 +49,13 @@ public:
 
 	float randf();
 
+//Oulines
+	void pack_outlines(std::vector<MarchingSquares::Result> results);
+	void simplify_outlines();
+
 //API
 	Vector2i get_dimensions();
-	PackedVector2Array get_outline();
-	PackedVector2Array get_simplified_outline();
+	TypedArray<PackedVector2Array> get_outlines();
+	TypedArray<PackedVector2Array> get_simplified_outlines();
 	PackedByteArray get_render_data();
 };

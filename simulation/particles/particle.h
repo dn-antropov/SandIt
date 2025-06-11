@@ -10,6 +10,7 @@ class Particle {
 
 private:
     bool isUpdated = false;
+    bool isMoving = false;
 
 public:
     GranularSimulation *sim;
@@ -22,6 +23,14 @@ public:
     bool get_is_updated() {
         return isUpdated;
     };
+
+    bool get_is_moving() {
+        return isMoving;
+    }
+
+    void set_is_moving(bool newIsMoving) {
+        isMoving = newIsMoving;
+    }
 
     void set_is_updated(bool newIsUpdated) {
         isUpdated = newIsUpdated;

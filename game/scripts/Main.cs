@@ -1,5 +1,7 @@
 using Godot;
+using Godot.NativeInterop;
 using System;
+using System.Linq;
 
 
 
@@ -8,18 +10,14 @@ public partial class Main : Node
 {
 	int counter = 0;
 	Variant simulation;
-	Vector2[] outline;
-	Vector2[] outline_simplified;
 
 	PackedScene sandPileCollision = GD.Load<PackedScene>("res://objects/sand_pile_collision.tscn");
-	Node sandPileCollisionInstance;
+	Godot.Collections.Array<Node> sandPileCollisionInstances = [];
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		simulation = ClassDB.Instantiate("GranularSimulation");
-		sandPileCollisionInstance = sandPileCollision.Instantiate();
-		AddChild(sandPileCollisionInstance);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -27,12 +25,25 @@ public partial class Main : Node
 	{
 
 		Step(1);
-		outline = simulation.AsGodotObject().Call("get_outline").AsVector2Array();
-		outline_simplified = simulation.AsGodotObject().Call("get_simplified_outline").AsVector2Array();
+		// outline = simulation.AsGodotObject().Call("get_outline").AsVector2Array();
+		Godot.Collections.Array<Vector2[]> outlines = simulation.AsGodotObject().Call("get_outlines").AsGodotArray<Vector2[]>();
+		Godot.Collections.Array<Vector2[]> simplified_outlines = simulation.AsGodotObject().Call("get_simplified_outlines").AsGodotArray<Vector2[]>();
 
-		sandPileCollisionInstance.GetNode<Line2D>("Outline_Pile").Points = MapOutline(outline);
-		sandPileCollisionInstance.GetNode<Line2D>("Outline_Collision").Points = MapOutline(outline_simplified);
-		sandPileCollisionInstance.GetNode<CollisionPolygon2D>("StaticBody/CollisionPolygon2D").Polygon = MapOutline(outline_simplified);
+		for (int i = 0; i < sandPileCollisionInstances.Count; i++)
+		{
+			sandPileCollisionInstances[i].QueueFree();
+		}
+		sandPileCollisionInstances.Clear();
+		for (int i = 0; i < outlines.Count; i++)
+		{
+			Node instance = sandPileCollision.Instantiate();
+			instance.GetNode<Line2D>("Outline_Pile").Points = MapOutline(outlines[i]);
+			instance.GetNode<Line2D>("Outline_Collision").Points = MapOutline(simplified_outlines[i]);
+			instance.GetNode<CollisionPolygon2D>("StaticBody/CollisionPolygon2D").Polygon = MapOutline(simplified_outlines[i]);
+			AddChild(instance);
+			sandPileCollisionInstances.Add(instance);
+			GD.Print(sandPileCollisionInstances.Count);
+		}
 	}
 
 	Vector2[] MapOutline(Vector2[] outline) {

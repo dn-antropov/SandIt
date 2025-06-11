@@ -42,6 +42,9 @@ env.Append(CPPPATH=["simulation/"])
 sources = Glob("simulation/*.cpp")
 sources.append(Glob("simulation/thirdparty/douglas-peucker/*.cpp"))
 
+if env['platform'] == 'windows':
+    env.Append(CCFLAGS=['/EHsc'])
+
 if env["platform"] == "macos":
     library = env.SharedLibrary(
         "game/bin/granularsimulation/libgdgransim.{}.{}.framework/libgdgransim.{}.{}".format(

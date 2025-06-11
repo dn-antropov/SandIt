@@ -35,5 +35,5 @@ public:
     uint32_t get_color() override {
         return color;
     }
-    
+
 };

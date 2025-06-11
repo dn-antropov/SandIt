@@ -1,9 +1,9 @@
 [gd_scene load_steps=9 format=3 uid="uid://btqdrnr04bjyy"]
 
-[ext_resource type="Script" path="res://scripts/Main.cs" id="1_woup2"]
-[ext_resource type="Script" path="res://scripts/ui/RenderSim.cs" id="2_nplto"]
-[ext_resource type="Script" path="res://scripts/ui/Painter.cs" id="3_vg588"]
-[ext_resource type="Script" path="res://scripts/world/objects/ball/Ball.cs" id="4_5j2cn"]
+[ext_resource type="Script" uid="uid://b4kwovl6cors0" path="res://scripts/Main.cs" id="1_woup2"]
+[ext_resource type="Script" uid="uid://bi7fu0nxiy7lv" path="res://scripts/ui/RenderSim.cs" id="2_nplto"]
+[ext_resource type="Script" uid="uid://c0nk1uwvhxfij" path="res://scripts/ui/Painter.cs" id="3_vg588"]
+[ext_resource type="Script" uid="uid://06kxldvm40uo" path="res://scripts/world/objects/ball/Ball.cs" id="4_5j2cn"]
 [ext_resource type="PhysicsMaterial" uid="uid://dqmsaxkf7hgl5" path="res://objects/ball/pm_ball.tres" id="4_qhdeu"]
 [ext_resource type="Shape2D" uid="uid://c47r2kahqii6n" path="res://scenes/main/SegmenShape2D_HorizontalBorder.tres" id="5_6fepg"]
 [ext_resource type="Shape2D" uid="uid://blyg2jm3w65kl" path="res://scenes/main/SegmenShape2D_VerticalBorder.tres" id="6_4lljf"]

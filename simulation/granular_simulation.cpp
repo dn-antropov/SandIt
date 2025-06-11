@@ -10,8 +10,8 @@
 using namespace godot;
 
 GranularSimulation::GranularSimulation() {
-    UtilityFunctions::print("==Prepare simulation====================================");
-    UtilityFunctions::print("==Initialize world grid=================================");
+    // UtilityFunctions::print("==Prepare simulation====================================");
+    // UtilityFunctions::print("==Initialize world grid=================================");
     initialize_grid(&particles);
 }
 
@@ -33,6 +33,7 @@ void GranularSimulation::step(int iterations) {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 particles[row * width + col]->set_is_updated(false);
+                particles[row * width + col]->set_is_moving(false);
             }
         }
         for (int row = height-1; row >=0; row--) {
@@ -44,23 +45,29 @@ void GranularSimulation::step(int iterations) {
     }
     unsigned char* data = new unsigned char[width * height];
     for (int id = 0; id < width * height; id++) {
-        data[id] = particles[id]->get_density()>0 ? 1 : 0;
+        //if (particles[id]->get_density() > 0 && !particles[id]->get_is_moving()) {
+        if (particles[id]->get_density() > 0) {
+            data[id] = 1;
+        } else {
+            data[id] = 0;
+        }
     }
-    MarchingSquares::Result r = MarchingSquares::FindPerimeter(width, height, data);
-    
-    // UtilityFunctions::print(r.initialX, " ", r.initialY);
-    int prevX = r.initialY;
-    int prevY = r.initialX;
-    outline.resize(size(r.directions));
-    // UtilityFunctions::print(prevX, " ", prevY);
-    for (int dI = 0; dI < size(r.directions); dI++) {
-        prevX = prevX - r.directions[dI].y;
-        prevY = prevY + r.directions[dI].x;
+    // MarchingSquares::Result r = MarchingSquares::FindPerimeter(width, height, data);
 
-        outline.set(dI, Vector2(prevX, prevY));
-    }
+    // int prevX = r.initialY;
+    // int prevY = r.initialX;
+    // outline.resize(size(r.directions));
+    // for (int dI = 0; dI < size(r.directions); dI++) {
+    //     prevX = prevX - r.directions[dI].y;
+    //     prevY = prevY + r.directions[dI].x;
+
+    //     outline.set(dI, Vector2(prevX, prevY));
+    // }
+
+    std::vector<MarchingSquares::Result> rs = MarchingSquares::FindPerimeters(width, height, 16, data);
+    pack_outlines(rs);
+    simplify_outlines();
 }
-
 
 void GranularSimulation::draw_particle(int row, int col, int typeID) {
     //UtilityFunctions::print("==Draw================================================");
@@ -74,7 +81,7 @@ void GranularSimulation::draw_particle(int row, int col, int typeID) {
 void GranularSimulation::swap(int rowA, int colA, int rowB, int colB) {
     if (!is_in_bounds(rowA, colA) || !is_in_bounds(rowB, colB))
         return;
-    
+
     Particle *tempP = particles[rowA * width + colA];
     particles[rowA * width + colA] = particles[rowB * width + colB];
     particles[rowB * width + colB] = tempP;
@@ -82,7 +89,10 @@ void GranularSimulation::swap(int rowA, int colA, int rowB, int colB) {
 
     particles[rowA * width + colA]->set_is_updated(true);
     particles[rowB * width + colB]->set_is_updated(true);
-    
+
+    particles[rowA * width + colA]->set_is_moving(true);
+    particles[rowB * width + colB]->set_is_moving(true);
+
 }
 
 bool GranularSimulation::is_in_bounds(int row, int col) {
@@ -100,8 +110,8 @@ bool GranularSimulation::is_swappable(int rowA, int colA, int rowB, int colB) {
 }
 
 inline float GranularSimulation::randf() {
-    g_seed = (214013 * g_seed + 2531011); 
-    return ((g_seed>>16) & 0x7FFF) / (double) 0x7FFF; 
+    g_seed = (214013 * g_seed + 2531011);
+    return ((g_seed>>16) & 0x7FFF) / (double) 0x7FFF;
 }
 
 Vector2i GranularSimulation::get_dimensions() {
@@ -113,7 +123,7 @@ PackedByteArray GranularSimulation::get_render_data() {
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
             uint32_t col = particles[x * width + y]->get_color();
-            
+
             int idx = (x * width + y) * 3;
             //convert hex to rgb
             render_data.set(idx, (col & 0xFF0000) >> 16);
@@ -124,20 +134,39 @@ PackedByteArray GranularSimulation::get_render_data() {
     return render_data;
 }
 
-PackedVector2Array GranularSimulation::get_outline() {
-    return outline;
+TypedArray<PackedVector2Array> GranularSimulation::get_outlines() {
+    return outlines;
 }
 
-PackedVector2Array GranularSimulation::get_simplified_outline() {
-    PackedVector2Array simplified_outline;
-    //simplified_outline.resize(size(result.directions));
+TypedArray<PackedVector2Array> GranularSimulation::get_simplified_outlines() {
+    return simplified_outlines;
+}
 
-    // float lastX = (float)result.initialX;
-    // float lastY = (float)result.initialY;
+void GranularSimulation::pack_outlines(std::vector<MarchingSquares::Result> results) {
+    outlines.clear();
+    for (MarchingSquares::Result result: results) {
+        int prevX = result.initialY;
+        int prevY = result.initialX;
 
-    simplified_outline = DouglasPeucker::simplify(outline, 1);
+        PackedVector2Array outlineToAdd;
+        outlineToAdd.resize(size(result.directions));
+        for (int dI = 0; dI < size(result.directions); dI++) {
+            prevX = prevX - result.directions[dI].y;
+            prevY = prevY + result.directions[dI].x;
 
-    return simplified_outline;
+            outlineToAdd.set(dI, Vector2(prevX, prevY));
+        }
+        outlines.append(outlineToAdd);
+    }
+    // UtilityFunctions::print(outlines.size());
+}
+
+void GranularSimulation::simplify_outlines() {
+    simplified_outlines.clear();
+    for (int i = outlines.size() - 1; i >= 0; i--) {
+        PackedVector2Array simplifiedOutlineToAdd = DouglasPeucker::simplify(outlines[i], 1);
+        simplified_outlines.append(simplifiedOutlineToAdd);
+    }
 }
 
 void GranularSimulation::_bind_methods() {
@@ -145,7 +174,7 @@ void GranularSimulation::_bind_methods() {
     ClassDB::bind_method(D_METHOD("draw_particle"), &GranularSimulation::draw_particle);
     ClassDB::bind_method(D_METHOD("get_dimensions"), &GranularSimulation::get_dimensions);
     ClassDB::bind_method(D_METHOD("get_render_data"), &GranularSimulation::get_render_data);
-    ClassDB::bind_method(D_METHOD("get_outline"), &GranularSimulation::get_outline);
-    ClassDB::bind_method(D_METHOD("get_simplified_outline"), &GranularSimulation::get_simplified_outline);
+    ClassDB::bind_method(D_METHOD("get_outlines"), &GranularSimulation::get_outlines);
+    ClassDB::bind_method(D_METHOD("get_simplified_outlines"), &GranularSimulation::get_simplified_outlines);
     ClassDB::bind_method(D_METHOD("is_in_bounds"), &GranularSimulation::is_in_bounds);
 }
