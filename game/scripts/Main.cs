@@ -25,7 +25,6 @@ public partial class Main : Node
 	{
 
 		Step(1);
-		// outline = simulation.AsGodotObject().Call("get_outline").AsVector2Array();
 		Godot.Collections.Array<Vector2[]> outlines = simulation.AsGodotObject().Call("get_outlines").AsGodotArray<Vector2[]>();
 		Godot.Collections.Array<Vector2[]> simplified_outlines = simulation.AsGodotObject().Call("get_simplified_outlines").AsGodotArray<Vector2[]>();
 
@@ -42,7 +41,6 @@ public partial class Main : Node
 			instance.GetNode<CollisionPolygon2D>("StaticBody/CollisionPolygon2D").Polygon = MapOutline(simplified_outlines[i]);
 			AddChild(instance);
 			sandPileCollisionInstances.Add(instance);
-			GD.Print(sandPileCollisionInstances.Count);
 		}
 	}
 

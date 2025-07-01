@@ -20,8 +20,6 @@ class GranularSimulation : public RefCounted {
 private:
 	std::vector<Particle*> particles;
 	PackedByteArray render_data;
-	// PackedVector2Array outline;
-	// PackedVector2Array simplified_outline;
 	TypedArray<PackedVector2Array> outlines;
 	TypedArray<PackedVector2Array> simplified_outlines;
 

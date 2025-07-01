@@ -10,6 +10,6 @@ class Nothing: public Particle {
     }
 
     uint32_t get_color() override {
-        return 0x181818;
+        return 0x000000;
     }
 };

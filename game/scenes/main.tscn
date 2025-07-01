@@ -1,12 +1,15 @@
-[gd_scene load_steps=9 format=3 uid="uid://btqdrnr04bjyy"]
+[gd_scene load_steps=11 format=3 uid="uid://btqdrnr04bjyy"]
 
 [ext_resource type="Script" uid="uid://b4kwovl6cors0" path="res://scripts/Main.cs" id="1_woup2"]
 [ext_resource type="Script" uid="uid://bi7fu0nxiy7lv" path="res://scripts/ui/RenderSim.cs" id="2_nplto"]
+[ext_resource type="Material" uid="uid://bq1vupdd3shhr" path="res://materials/sand.tres" id="2_tipki"]
 [ext_resource type="Script" uid="uid://c0nk1uwvhxfij" path="res://scripts/ui/Painter.cs" id="3_vg588"]
 [ext_resource type="Script" uid="uid://06kxldvm40uo" path="res://scripts/world/objects/ball/Ball.cs" id="4_5j2cn"]
 [ext_resource type="PhysicsMaterial" uid="uid://dqmsaxkf7hgl5" path="res://objects/ball/pm_ball.tres" id="4_qhdeu"]
 [ext_resource type="Shape2D" uid="uid://c47r2kahqii6n" path="res://scenes/main/SegmenShape2D_HorizontalBorder.tres" id="5_6fepg"]
 [ext_resource type="Shape2D" uid="uid://blyg2jm3w65kl" path="res://scenes/main/SegmenShape2D_VerticalBorder.tres" id="6_4lljf"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tipki"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xbqxo"]
 
@@ -15,8 +18,10 @@ script = ExtResource("1_woup2")
 
 [node name="RenderSim" type="TextureRect" parent="."]
 texture_filter = 1
-offset_right = 1024.0
-offset_bottom = 1024.0
+material = ExtResource("2_tipki")
+offset_right = 1080.0
+offset_bottom = 1080.0
+texture = SubResource("NoiseTexture2D_tipki")
 script = ExtResource("2_nplto")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -24,13 +29,14 @@ script = ExtResource("2_nplto")
 [node name="UI" type="Control" parent="CanvasLayer"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 1024.0
-offset_bottom = 1024.0
+offset_right = 1080.0
+offset_bottom = 1080.0
 
 [node name="Painter" type="Node" parent="."]
 script = ExtResource("3_vg588")
 
 [node name="RigidBody2D_BouncyBall" type="RigidBody2D" parent="."]
+visible = false
 position = Vector2(512, 64)
 mass = 0.1
 physics_material_override = ExtResource("4_qhdeu")
@@ -43,22 +49,26 @@ shape = SubResource("CircleShape2D_xbqxo")
 [node name="Sprite2D" type="Sprite2D" parent="RigidBody2D_BouncyBall"]
 
 [node name="StaticBody2D_Floor" type="StaticBody2D" parent="."]
+visible = false
 position = Vector2(0, 1024)
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D_Floor"]
 shape = ExtResource("5_6fepg")
 
 [node name="StaticBody2D_Ceiling" type="StaticBody2D" parent="."]
+visible = false
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D_Ceiling"]
 shape = ExtResource("5_6fepg")
 
 [node name="StaticBody2D_LeftWall" type="StaticBody2D" parent="."]
+visible = false
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D_LeftWall"]
 shape = ExtResource("6_4lljf")
 
 [node name="StaticBody2D_RightWall" type="StaticBody2D" parent="."]
+visible = false
 position = Vector2(1024, 0)
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D_RightWall"]

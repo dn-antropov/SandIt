@@ -5,7 +5,7 @@ public partial class Common : Node
     public static Main main;
     public static RenderSim renderSim;
 
-    public static int pixelScale = 4;
+    public static float pixelScale = 4.21875F;
 
     public override void _Ready()
 	{

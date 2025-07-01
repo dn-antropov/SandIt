@@ -10,8 +10,6 @@
 using namespace godot;
 
 GranularSimulation::GranularSimulation() {
-    // UtilityFunctions::print("==Prepare simulation====================================");
-    // UtilityFunctions::print("==Initialize world grid=================================");
     initialize_grid(&particles);
 }
 
@@ -28,7 +26,6 @@ void GranularSimulation::initialize_grid(std::vector<Particle*> *ps) {
 }
 
 void GranularSimulation::step(int iterations) {
-    // UtilityFunctions::print("==New Iteration=========================================");
     for (int i = 0; i < iterations; i++) {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
@@ -52,25 +49,13 @@ void GranularSimulation::step(int iterations) {
             data[id] = 0;
         }
     }
-    // MarchingSquares::Result r = MarchingSquares::FindPerimeter(width, height, data);
-
-    // int prevX = r.initialY;
-    // int prevY = r.initialX;
-    // outline.resize(size(r.directions));
-    // for (int dI = 0; dI < size(r.directions); dI++) {
-    //     prevX = prevX - r.directions[dI].y;
-    //     prevY = prevY + r.directions[dI].x;
-
-    //     outline.set(dI, Vector2(prevX, prevY));
-    // }
 
     std::vector<MarchingSquares::Result> rs = MarchingSquares::FindPerimeters(width, height, 16, data);
     pack_outlines(rs);
     simplify_outlines();
 }
 
-void GranularSimulation::draw_particle(int row, int col, int typeID) {
-    //UtilityFunctions::print("==Draw================================================");
+void GranularSimulation::draw_particle(int row, int col, int typeID){
     if (!is_in_bounds(row, col)) {
         return;
     }

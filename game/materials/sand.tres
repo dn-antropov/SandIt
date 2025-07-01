@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bq1vupdd3shhr"]
+
+[ext_resource type="Shader" uid="uid://e7cdidxr3sta" path="res://shaders/sand.gdshader" id="1_fiptr"]
+
+[resource]
+shader = ExtResource("1_fiptr")
+shader_parameter/fade_speed = 1.0
