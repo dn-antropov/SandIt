@@ -3,6 +3,7 @@ using System;
 
 public partial class Painter : Node
 {
+	double elapsedTime;
 	[Signal]
 	public delegate void MousePressedEventHandler(Vector2 begin, Vector2 end);
 	// Called when the node enters the scene tree for the first time.
@@ -14,10 +15,18 @@ public partial class Painter : Node
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		if (Input.IsActionPressed("LeftClick")) {
-			Vector2 begin = GetViewport().GetMousePosition() / Common.pixelScale;
-			EmitSignal(SignalName.MousePressed, begin, new Vector2(1,1));
+		// if (Input.IsActionPressed("LeftClick"))
+		// {
+		// 	Vector2 begin = GetViewport().GetMousePosition() / Common.pixelScale;
+		// 	EmitSignal(SignalName.MousePressed, begin, new Vector2(1, 1));
+		// }
+		elapsedTime += delta;
+		if (elapsedTime > 1)
+		{
+			DrawCircle(new Vector2(128, 64), 10);
+			elapsedTime = 0;
 		}
+
 	}
 
 	public void OnMousePressed(Vector2 begin, Vector2 end) {
@@ -29,9 +38,13 @@ public partial class Painter : Node
 		if (Common.main.IsInBounds(position_i)) {
 			for (int row = -radius; row <= radius + 1; row++) {
 				for (int col = -radius; col <= radius + 1; col++) {
-					if (row*row + col*col < radius*radius) {
+					if (row * row + col * col < radius * radius)
+					{
 						Vector2I drawPosition = new Vector2I(row + position_i.X, col + position_i.Y);
-						DrawPixel(drawPosition);
+						if (GD.RandRange(0, 100) > 50)
+						{
+							DrawPixel(drawPosition);
+						}
 					}
 				}
 			}
