@@ -13,3 +13,4 @@ game/addons
 .sconsign.dblite
 
 .vscode/settings.json
+.idea
