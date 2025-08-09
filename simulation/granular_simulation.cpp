@@ -34,10 +34,21 @@ void GranularSimulation::step(int iterations) {
             }
         }
         for (int row = height-1; row >=0; row--) {
-            for (int col = 0; col < width; col++) {
-                if (!particles[row * width + col]->get_is_updated())
-                    particles[row * width + col]->update(this, row, col);
+            // fix left to right bias
+            bool left_to_right = (randf() < 0.5f);
+            if (left_to_right) {
+                for (int col = 0; col < width; col++) {
+                    if (!particles[row * width + col]->get_is_updated())
+                        particles[row * width + col]->update(this, row, col);
+                }
             }
+            else {
+                for (int col = width - 1; col >= 0; col--) {
+                    if (!particles[row * width + col]->get_is_updated())
+                        particles[row * width + col]->update(this, row, col);
+                }
+            }
+
         }
     }
     unsigned char* data = new unsigned char[width * height];
@@ -50,15 +61,16 @@ void GranularSimulation::step(int iterations) {
         }
     }
 
-    std::vector<MarchingSquares::Result> rs = MarchingSquares::FindPerimeters(width, height, 16, data);
-    pack_outlines(rs);
-    simplify_outlines();
+    // disable outlines detection, as for now i don't think i need them
+    // std::vector<MarchingSquares::Result> rs = MarchingSquares::FindPerimeters(width, height, 16, data);
+    // pack_outlines(rs);
+    // simplify_outlines();
 }
 
 void GranularSimulation::draw_particle(int row, int col, int typeID){
-    if (!is_in_bounds(row, col)) {
+    if (!is_in_bounds(row, col))
         return;
-    }
+
     delete particles[row * width + col];
     particles[row * width + col] = new Sand();
 }
@@ -81,7 +93,7 @@ void GranularSimulation::swap(int rowA, int colA, int rowB, int colB) {
 }
 
 bool GranularSimulation::is_in_bounds(int row, int col) {
-    return row >= 0 && col >= 0 && row < width && col < width;
+    return row >= 0 && col >= 0 && row < height && col < width;
 }
 
 bool GranularSimulation::is_swappable(int rowA, int colA, int rowB, int colB) {
