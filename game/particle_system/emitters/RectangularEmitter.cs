@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Security.Principal;
 
 [Tool]
 public partial class RectangularEmitter : Node2D
@@ -7,6 +8,14 @@ public partial class RectangularEmitter : Node2D
     private int _width, _height = 100;
 
     private int _x, _y = 0;
+
+    private double elapsedTime = 0;
+
+    [Export]
+    public double SpawnInterval = 1;
+
+    [Export]
+    public int SpawnAmount = 100;
 
     [Export]
     public int Width
@@ -32,7 +41,7 @@ public partial class RectangularEmitter : Node2D
         }
     }
 
-        [Export]
+    [Export]
     public int X
     {
         get => _x;
@@ -58,8 +67,35 @@ public partial class RectangularEmitter : Node2D
 
     public override void _Draw()
     {
-        var rect = new Rect2(new Vector2(_x, _y), new Vector2(_width, _height));
-        DrawRect(rect, new Color(1, 0, 0, 0.5f), true);
-        DrawRect(rect, Colors.Red, false); // outline
+        if (Engine.IsEditorHint())
+        {
+            var rect = new Rect2(new Vector2(_x, _y), new Vector2(_width, _height));
+            DrawRect(rect, new Color(1, 0, 0, 0.5f), true);
+        }
+    }
+
+    public override void _Process(double delta)
+    {
+        if (Engine.IsEditorHint())
+            return;
+        base._Process(delta);
+
+        elapsedTime += delta;
+        if (elapsedTime >= SpawnInterval)
+        {
+            for (int p = 0; p < SpawnAmount; p++)
+            {
+                int scaledWidth = (int)(_width / Common.pixelScale);
+                int scaledHeight = (int)(_height / Common.pixelScale);
+                DrawParticle(new Vector2I(GD.RandRange(0, scaledHeight), GD.RandRange(0, scaledWidth)));
+            }
+            elapsedTime = 0;
+        }
+    }
+
+
+    private void DrawParticle(Vector2I position)
+    {
+        Common.main.Draw(position);
     }
 }

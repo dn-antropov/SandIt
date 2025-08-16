@@ -1,10 +1,9 @@
 shader_type canvas_item;
 
 uniform sampler2D in_texture: source_color, filter_nearest;
-uniform float speed;
 
 float getCellBright(float id) {
-    return sin(TIME + id*10.)*.5+.5; // returns 0. to 1.
+    return sin(TIME*mod(id,16.)*10.)*.5+.5; // returns 0. to 1.
 }
 
 void fragment() {
