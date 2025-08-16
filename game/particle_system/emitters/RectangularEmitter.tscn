@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://mypqaqg40evy"]
+
+[ext_resource type="Script" uid="uid://bvajtx1hdouu1" path="res://particle_system/emitters/RectangularEmitter.cs" id="1_pcb7g"]
+
+[node name="RectangularEmitter" type="Node2D"]
+script = ExtResource("1_pcb7g")
+Width = 100
