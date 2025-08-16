@@ -11,6 +11,7 @@ using namespace godot;
 
 GranularSimulation::GranularSimulation() {
     initialize_grid(&particles);
+    fill_id_pool(&idPool);
 }
 
 GranularSimulation::~GranularSimulation() {}
@@ -23,6 +24,13 @@ void GranularSimulation::initialize_grid(std::vector<Particle*> *ps) {
 
     render_data = PackedByteArray();
     render_data.resize(width * height * 3);
+}
+
+void GranularSimulation::fill_id_pool(std::unordered_set<int> *idPool) {
+    idPool->clear();
+    for (int i = 0; i <= width * height; i++) {
+        idPool->insert(i);
+    }
 }
 
 void GranularSimulation::step(int iterations) {
@@ -51,15 +59,6 @@ void GranularSimulation::step(int iterations) {
 
         }
     }
-    unsigned char* data = new unsigned char[width * height];
-    for (int id = 0; id < width * height; id++) {
-        //if (particles[id]->get_density() > 0 && !particles[id]->get_is_moving()) {
-        if (particles[id]->get_density() > 0) {
-            data[id] = 1;
-        } else {
-            data[id] = 0;
-        }
-    }
 
     // disable outlines detection, as for now i don't think i need them
     // std::vector<MarchingSquares::Result> rs = MarchingSquares::FindPerimeters(width, height, 16, data);
@@ -67,12 +66,34 @@ void GranularSimulation::step(int iterations) {
     // simplify_outlines();
 }
 
-void GranularSimulation::draw_particle(int row, int col, int typeID){
+void GranularSimulation::create_particle(int row, int col, int typeID) {
     if (!is_in_bounds(row, col))
         return;
 
     delete particles[row * width + col];
     particles[row * width + col] = new Sand();
+    assing_id(particles[row * width + col]);
+}
+
+void GranularSimulation::destroy_particle(int row, int col) {
+    if (!is_in_bounds(row, col))
+        return;
+
+    if (particles[row * width + col]->id > -1) {
+        remove_id(particles[row * width + col]);
+        delete particles[row * width + col];
+        particles[row * width + col] = new Nothing();
+    }
+}
+
+void GranularSimulation::assing_id(Particle* particle) {
+    particle->id = *idPool.begin();
+    idPool.erase(particle->id);
+}
+
+void GranularSimulation::remove_id(Particle* particle) {
+    idPool.insert(particle->id);
+    particle->id = -1;
 }
 
 void GranularSimulation::swap(int rowA, int colA, int rowB, int colB) {
@@ -119,13 +140,21 @@ Vector2i GranularSimulation::get_dimensions() {
 PackedByteArray GranularSimulation::get_render_data() {
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
-            uint32_t col = particles[x * width + y]->get_color();
-
             int idx = (x * width + y) * 3;
-            //convert hex to rgb
-            render_data.set(idx, (col & 0xFF0000) >> 16);
-            render_data.set(idx + 1, (col & 0x00FF00) >> 8);
-            render_data.set(idx + 2, col & 0x0000FF);
+            int id = particles[x * width + y]->id;
+
+            render_data.set(idx, particles[x * width + y]->type);
+            // convert id to b and g channels
+            render_data.set(idx + 1, id / width);
+            render_data.set(idx + 2, id / height);
+
+            // // use color data
+            // uint32_t col = particles[x * width + y]->get_color();
+            // // convert hex to rgb
+
+            // render_data.set(idx, (col & 0xFF0000) >> 16);
+            // render_data.set(idx + 1, (col & 0x00FF00) >> 8);
+            // render_data.set(idx + 2, col & 0x0000FF);
         }
     }
     return render_data;
@@ -168,7 +197,7 @@ void GranularSimulation::simplify_outlines() {
 
 void GranularSimulation::_bind_methods() {
     ClassDB::bind_method(D_METHOD("step"), &GranularSimulation::step);
-    ClassDB::bind_method(D_METHOD("draw_particle"), &GranularSimulation::draw_particle);
+    ClassDB::bind_method(D_METHOD("draw_particle"), &GranularSimulation::create_particle);
     ClassDB::bind_method(D_METHOD("get_dimensions"), &GranularSimulation::get_dimensions);
     ClassDB::bind_method(D_METHOD("get_render_data"), &GranularSimulation::get_render_data);
     ClassDB::bind_method(D_METHOD("get_outlines"), &GranularSimulation::get_outlines);

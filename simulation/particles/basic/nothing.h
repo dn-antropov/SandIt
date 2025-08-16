@@ -3,6 +3,12 @@
 #include "../particle.h"
 
 class Nothing: public Particle {
+
+public:
+    Nothing() {
+        type = 0;
+    }
+
     void update(GranularSimulation *sim, int row, int col) override {}
 
     double get_density() override {

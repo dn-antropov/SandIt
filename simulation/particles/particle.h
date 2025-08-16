@@ -7,6 +7,9 @@ class GranularSimulation;
 #include "../granular_simulation.h"
 
 class Particle {
+public:
+    int id = -1;
+    int type = -1;
 
 private:
     bool isUpdated = false;

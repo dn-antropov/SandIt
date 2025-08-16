@@ -8,6 +8,9 @@ private:
     uint32_t color = 0xf1c232;
 
 public:
+    Sand() {
+        type = 1;
+    }
     void update(GranularSimulation *sim, int row, int col) override {
         // color = 0xf1c232;
         bool can_move_left = sim->is_swappable(row, col, row + 1, col - 1);
@@ -22,9 +25,6 @@ public:
             sim->swap(row, col, row + 1, col - 1);
         } else if (can_move_right) {
             sim->swap(row, col, row + 1, col + 1);
-        } else {
-            // used for debugging
-            // color = 0xF44336;
         }
     }
 
