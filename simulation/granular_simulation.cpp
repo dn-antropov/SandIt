@@ -79,11 +79,10 @@ void GranularSimulation::destroy_particle(int row, int col) {
     if (!is_in_bounds(row, col))
         return;
 
-    if (particles[row * width + col]->id > -1) {
-        remove_id(particles[row * width + col]);
-        delete particles[row * width + col];
-        particles[row * width + col] = new Nothing();
-    }
+    remove_id(particles[row * width + col]);
+    delete particles[row * width + col];
+    particles[row * width + col] = new Nothing();
+
 }
 
 void GranularSimulation::assing_id(Particle* particle) {
@@ -197,7 +196,8 @@ void GranularSimulation::simplify_outlines() {
 
 void GranularSimulation::_bind_methods() {
     ClassDB::bind_method(D_METHOD("step"), &GranularSimulation::step);
-    ClassDB::bind_method(D_METHOD("draw_particle"), &GranularSimulation::create_particle);
+    ClassDB::bind_method(D_METHOD("create_particle"), &GranularSimulation::create_particle);
+    ClassDB::bind_method(D_METHOD("destroy_particle"), &GranularSimulation::destroy_particle);
     ClassDB::bind_method(D_METHOD("get_dimensions"), &GranularSimulation::get_dimensions);
     ClassDB::bind_method(D_METHOD("get_render_data"), &GranularSimulation::get_render_data);
     ClassDB::bind_method(D_METHOD("get_outlines"), &GranularSimulation::get_outlines);

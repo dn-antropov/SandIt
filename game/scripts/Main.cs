@@ -70,10 +70,15 @@ public partial class Main : Node
 	}
 
 	public void Draw(Vector2I position) {
-		simulation.AsGodotObject().Call("draw_particle", position.X, position.Y, 0);
+		simulation.AsGodotObject().Call("create_particle", position.X, position.Y, 0);
 	}
 
-	public void Step(int iterations) {
+	public void Erase(Vector2I position) {
+		simulation.AsGodotObject().Call("destroy_particle", position.X, position.Y);
+	}
+
+	public void Step(int iterations)
+	{
 		simulation.AsGodotObject().Call("step", iterations);
 	}
 }

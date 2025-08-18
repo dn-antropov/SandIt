@@ -28,8 +28,8 @@ private:
 public:
 	unsigned int g_seed = 12345;
 
-	int width = 256;
-    int height = 256;
+	int width = 128;
+    int height = 128;
 
 protected:
 	static void _bind_methods();

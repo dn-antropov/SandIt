@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ccolqx5c2a5uq"]
+
+[ext_resource type="Script" uid="uid://qxiwmltt4d50" path="res://particle_system/collectors/RectangularCollector.cs" id="1_2v4ee"]
+
+[node name="RectangularCollector" type="Node2D"]
+script = ExtResource("1_2v4ee")
+Width = 100
