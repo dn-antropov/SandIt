@@ -57,7 +57,7 @@
             "environment": [],
             "args": [
                 "--path",
-                "${workspaceRoot}/game",
+                "${workspaceFolder}/game",
                 "--editor"
             ]
         },
@@ -73,7 +73,7 @@
             "environment": [],
             "args": [
                 "--path",
-                "${workspaceRoot}/game"
+                "${workspaceFolder}/game"
             ]
         },
         {
