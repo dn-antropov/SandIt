@@ -8,11 +8,14 @@ using System.Linq;
 
 public partial class Main : Node
 {
+	[Signal]
+	public delegate void UpdateSimEventHandler();
+	
 	Variant simulation;
 
 	double elapsedTime = 0;
 
-	public double timestep = 0.033;
+	public double timestep = 0.066;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -27,6 +30,7 @@ public partial class Main : Node
 		if (elapsedTime > timestep)
 		{
 			Step(1);
+			EmitSignal(SignalName.UpdateSim);
 			elapsedTime = 0;
 		}
 	}
@@ -50,8 +54,10 @@ public partial class Main : Node
 		simulation.AsGodotObject().Call("create_particle", position.X, position.Y, 0);
 	}
 
-	public void Erase(Vector2I position) {
-		simulation.AsGodotObject().Call("destroy_particle", position.X, position.Y);
+	public int Erase(Vector2I position)
+	{
+		int type = simulation.AsGodotObject().Call("destroy_particle", position.X, position.Y).AsInt32();
+		return type;
 	}
 
 	public void Step(int iterations)

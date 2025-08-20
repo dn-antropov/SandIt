@@ -10,6 +10,7 @@ public partial class RectangularCollector : Node2D
     private int _x, _y = 0;
 
     private double elapsedTime = 0;
+    private int score = 0;
 
     [Export]
     public double CollectInterval = 1;
@@ -78,26 +79,32 @@ public partial class RectangularCollector : Node2D
 
         base._Process(delta);
         elapsedTime += delta;
-        int scaledWidth = (int)(_width / Common.pixelScale);
-        int scaledHeight = (int)(_height / Common.pixelScale);
-        int scaledX = (int)(_x / Common.pixelScale);
-        int scaledY = (int)(_y / Common.pixelScale);
+
         if (elapsedTime > CollectInterval)
         {
-            for (int x = scaledX; x < scaledX + scaledWidth; x++)
+            int scaledWidth = (int)(_width / Common.pixelScale);
+            int scaledHeight = (int)(_height / Common.pixelScale);
+            int scaledX = (int)(_y / Common.pixelScale);
+            int scaledY = (int)(_x / Common.pixelScale);
+            for (int px = scaledX; px < scaledX + scaledWidth; px++)
             {
-                for (int y = scaledY; y < scaledX + scaledHeight; y++)
+                for (int py = scaledY; py < scaledY + scaledHeight; py++)
                 {
-                    EraseParticle(new Vector2I(x, y));
+                    int type = EraseParticle(new Vector2I(px, py));
+                    if (type == 1)
+                    {
+                        score++;
+                    }
                 }
             }
+            GD.Print(score);
             elapsedTime = 0;
         }
     }
 
 
-    private void EraseParticle(Vector2I position)
+    private int EraseParticle(Vector2I position)
     {
-        Common.main.Erase(position);
+        return Common.main.Erase(position);
     }
 }

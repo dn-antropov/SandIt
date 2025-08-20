@@ -75,14 +75,17 @@ void GranularSimulation::create_particle(int row, int col, int typeID) {
     assing_id(particles[row * width + col]);
 }
 
-void GranularSimulation::destroy_particle(int row, int col) {
+int GranularSimulation::destroy_particle(int row, int col) {
     if (!is_in_bounds(row, col))
-        return;
+        return -1;
+    int type = particles[row * width + col]->type;
+    if (type == 0)
+        return 0;
 
     remove_id(particles[row * width + col]);
     delete particles[row * width + col];
     particles[row * width + col] = new Nothing();
-
+    return type;
 }
 
 void GranularSimulation::assing_id(Particle* particle) {

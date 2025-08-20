@@ -42,7 +42,7 @@ public:
 	void step(int iterations);
 
 	void create_particle(int row, int col, int typeID);
-	void destroy_particle(int row, int col);
+	int destroy_particle(int row, int col);
 	void fill_id_pool(std::unordered_set<int> *idPool);
 	void assing_id(Particle* particle);
 	void remove_id(Particle* particle);
