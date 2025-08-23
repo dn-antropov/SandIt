@@ -30,10 +30,15 @@ offset_bottom = 1024.0
 [node name="RectangularEmitter" parent="." instance=ExtResource("2_choun")]
 SpawnInterval = 0.016
 SpawnAmount = 5
+weights = Dictionary[int, int]({
+2: 99,
+3: 1
+})
 Width = 1024
 Height = 48
 
 [node name="RectangularCollector" parent="." instance=ExtResource("5_tbgi4")]
+PacketsToCollect = 48
 Width = 256
 Height = 256
 X = 384

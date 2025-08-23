@@ -2,24 +2,28 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <vector>
 
-#include "particles/basic/nothing.h"
-#include "particles/basic/sand.h"
+#include "./packets/packet_types.h"
+#include "./packets/basic/nothing.h"
+#include "./packets/basic/wall.h"
+#include "./packets/basic/basic.h"
+#include "./packets/basic/spam.h"
 
 #include "./thirdparty/douglas-peucker/polygon-simplify.h"
 
 using namespace godot;
 
 GranularSimulation::GranularSimulation() {
-    initialize_grid(&particles);
     fill_id_pool(&idPool);
+    initialize_grid(&packets);
 }
 
 GranularSimulation::~GranularSimulation() {}
 
-void GranularSimulation::initialize_grid(std::vector<Particle*> *ps) {
+void GranularSimulation::initialize_grid(std::vector<Packet*> *ps) {
     ps->resize(width*height);
     for (int i = 0; i < width*height; i++) {
         ps->at(i) = new Nothing();
+        assign_id(ps->at(i));
     }
 
     render_data = PackedByteArray();
@@ -28,7 +32,7 @@ void GranularSimulation::initialize_grid(std::vector<Particle*> *ps) {
 
 void GranularSimulation::fill_id_pool(std::unordered_set<int> *idPool) {
     idPool->clear();
-    for (int i = 0; i <= width * height; i++) {
+    for (int i = 0; i < width * height; i++) {
         idPool->insert(i);
     }
 }
@@ -37,8 +41,8 @@ void GranularSimulation::step(int iterations) {
     for (int i = 0; i < iterations; i++) {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
-                particles[row * width + col]->set_is_updated(false);
-                particles[row * width + col]->set_is_moving(false);
+                packets[row * width + col]->set_is_updated(false);
+                packets[row * width + col]->set_is_moving(false);
             }
         }
         for (int row = height-1; row >=0; row--) {
@@ -46,14 +50,14 @@ void GranularSimulation::step(int iterations) {
             bool left_to_right = (randf() < 0.5f);
             if (left_to_right) {
                 for (int col = 0; col < width; col++) {
-                    if (!particles[row * width + col]->get_is_updated())
-                        particles[row * width + col]->update(this, row, col);
+                    if (!packets[row * width + col]->get_is_updated())
+                        packets[row * width + col]->update(this, row, col);
                 }
             }
             else {
                 for (int col = width - 1; col >= 0; col--) {
-                    if (!particles[row * width + col]->get_is_updated())
-                        particles[row * width + col]->update(this, row, col);
+                    if (!packets[row * width + col]->get_is_updated())
+                        packets[row * width + col]->update(this, row, col);
                 }
             }
 
@@ -66,52 +70,79 @@ void GranularSimulation::step(int iterations) {
     // simplify_outlines();
 }
 
-void GranularSimulation::create_particle(int row, int col, int typeID) {
+void GranularSimulation::create_particle(int row, int col, int type) {
     if (!is_in_bounds(row, col))
         return;
 
-    delete particles[row * width + col];
-    particles[row * width + col] = new Sand();
-    assing_id(particles[row * width + col]);
+    if (packets[row * width + col]->type == type)
+        return;
+
+    remove_id(packets[row * width + col]);
+    delete packets[row * width + col];
+
+    PacketType packetType = static_cast<PacketType>(type);
+    Packet* packet;
+    switch(packetType) {
+        case ENothing:
+            packet = new Nothing();
+            break;
+        case EWall:
+            packet = new Wall();
+            break;
+        case EBasic:
+            packet = new Basic();
+            break;
+        case ESpam:
+            packet = new Spam();
+            break;
+        default:
+            packet = new Nothing();
+            break;
+    }
+
+    assign_id(packet);
+    packets[row * width + col] = packet;
 }
 
 int GranularSimulation::destroy_particle(int row, int col) {
     if (!is_in_bounds(row, col))
         return -1;
-    int type = particles[row * width + col]->type;
-    if (type == 0)
-        return 0;
+    int type = packets[row * width + col]->type;
 
-    remove_id(particles[row * width + col]);
-    delete particles[row * width + col];
-    particles[row * width + col] = new Nothing();
+    if (type == PacketType::ENothing)
+        return PacketType::ENothing;
+
+    remove_id(packets[row * width + col]);
+    delete packets[row * width + col];
+
+    packets[row * width + col] = new Nothing();
+    assign_id(packets[row * width + col]);
     return type;
 }
 
-void GranularSimulation::assing_id(Particle* particle) {
-    particle->id = *idPool.begin();
-    idPool.erase(particle->id);
+void GranularSimulation::assign_id(Packet* packet) {
+    packet->id = *idPool.begin();
+    idPool.erase(packet->id);
 }
 
-void GranularSimulation::remove_id(Particle* particle) {
-    idPool.insert(particle->id);
-    particle->id = -1;
+void GranularSimulation::remove_id(Packet* packet) {
+    idPool.insert(packet->id);
 }
 
 void GranularSimulation::swap(int rowA, int colA, int rowB, int colB) {
     if (!is_in_bounds(rowA, colA) || !is_in_bounds(rowB, colB))
         return;
 
-    Particle *tempP = particles[rowA * width + colA];
-    particles[rowA * width + colA] = particles[rowB * width + colB];
-    particles[rowB * width + colB] = tempP;
+    Packet *tempP = packets[rowA * width + colA];
+    packets[rowA * width + colA] = packets[rowB * width + colB];
+    packets[rowB * width + colB] = tempP;
     tempP = NULL;
 
-    particles[rowA * width + colA]->set_is_updated(true);
-    particles[rowB * width + colB]->set_is_updated(true);
+    packets[rowA * width + colA]->set_is_updated(true);
+    packets[rowB * width + colB]->set_is_updated(true);
 
-    particles[rowA * width + colA]->set_is_moving(true);
-    particles[rowB * width + colB]->set_is_moving(true);
+    packets[rowA * width + colA]->set_is_moving(true);
+    packets[rowB * width + colB]->set_is_moving(true);
 
 }
 
@@ -123,7 +154,7 @@ bool GranularSimulation::is_swappable(int rowA, int colA, int rowB, int colB) {
     if (!is_in_bounds(rowA, colA) || !is_in_bounds(rowB, colB))
         return false;
 
-    if (particles[rowA * width + colA]->get_density() <= particles[rowB * width + colB]->get_density())
+    if (packets[rowA * width + colA]->get_density() <= packets[rowB * width + colB]->get_density())
         return false;
 
     return true;
@@ -142,21 +173,13 @@ Vector2i GranularSimulation::get_dimensions() {
 PackedByteArray GranularSimulation::get_render_data() {
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
-            int idx = (x * width + y) * 3;
-            int id = particles[x * width + y]->id;
+            int idx = (y * width + x) * 3;
+            int id = packets[y * width + x]->id;
 
-            render_data.set(idx, particles[x * width + y]->type);
-            // convert id to b and g channels
-            render_data.set(idx + 1, id / width);
-            render_data.set(idx + 2, id / height);
-
-            // // use color data
-            // uint32_t col = particles[x * width + y]->get_color();
-            // // convert hex to rgb
-
-            // render_data.set(idx, (col & 0xFF0000) >> 16);
-            // render_data.set(idx + 1, (col & 0x00FF00) >> 8);
-            // render_data.set(idx + 2, col & 0x0000FF);
+            render_data.set(idx, packets[y * width + x]->type);
+            // convert id to b and g channels by storing lower and upper part
+            render_data.set(idx + 1, id & 0xFF);
+            render_data.set(idx + 2, (id >> 8) & 0xFF);
         }
     }
     return render_data;
@@ -186,7 +209,6 @@ void GranularSimulation::pack_outlines(std::vector<MarchingSquares::Result> resu
         }
         outlines.append(outlineToAdd);
     }
-    // UtilityFunctions::print(outlines.size());
 }
 
 void GranularSimulation::simplify_outlines() {

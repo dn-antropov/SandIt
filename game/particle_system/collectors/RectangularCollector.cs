@@ -14,6 +14,8 @@ public partial class RectangularCollector : Node2D
 
     [Export]
     public double CollectInterval = 1;
+    [Export]
+    public int PacketsToCollect = 0;
 
     [Export]
     public int Width
@@ -76,7 +78,6 @@ public partial class RectangularCollector : Node2D
     {
         if (Engine.IsEditorHint())
             return;
-
         base._Process(delta);
         elapsedTime += delta;
 
@@ -86,24 +87,40 @@ public partial class RectangularCollector : Node2D
             int scaledHeight = (int)(_height / Common.pixelScale);
             int scaledX = (int)(_y / Common.pixelScale);
             int scaledY = (int)(_x / Common.pixelScale);
-            for (int px = scaledX; px < scaledX + scaledWidth; px++)
-            {
-                for (int py = scaledY; py < scaledY + scaledHeight; py++)
-                {
-                    int type = EraseParticle(new Vector2I(px, py));
-                    if (type == 1)
-                    {
-                        score++;
-                    }
-                }
-            }
-            GD.Print(score);
+            CollectNPackets(scaledX, scaledY, scaledWidth, scaledHeight, PacketsToCollect);
+            //CollectAllPackets(scaledX, scaledY, scaledWidth, scaledHeight);
             elapsedTime = 0;
         }
     }
 
+    private void CollectNPackets(int x, int y, int width, int height, int N)
+    {
+        for (int p = 0; p < N; p++)
+        {
+            Vector2I position = new Vector2I(GD.RandRange(x, x + width), GD.RandRange(y, y + height));
+            int type = CollectPacket(position);
+            if (type == (int)Common.PacketType.Basic)
+            {
+                score++;
+            }
+        }
+    }
 
-    private int EraseParticle(Vector2I position)
+    private void CollectAllPackets(int x, int y, int width, int height)
+    {
+        for (int px = x; px < (x + width); px++)
+        {
+            for (int py = y; py < (y + height); py++)
+            {
+                int type = CollectPacket(new Vector2I(px, py));
+                if (type == (int)Common.PacketType.Basic)
+                {
+                    score++;
+                }
+            }
+        }
+    }
+    private int CollectPacket(Vector2I position)
     {
         return Common.main.Erase(position);
     }

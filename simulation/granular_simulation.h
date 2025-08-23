@@ -7,7 +7,8 @@
 #include <unordered_set>
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/variant/vector2i.hpp>
-#include "./particles/particle.h"
+
+#include "./packets/packet.h"
 
 #include "./thirdparty/cpp-marching-squares/MarchingSquares.h"
 
@@ -19,7 +20,7 @@ class GranularSimulation : public RefCounted {
 
 
 private:
-	std::vector<Particle*> particles;
+	std::vector<Packet*> packets;
 	std::unordered_set<int> idPool;
 	PackedByteArray render_data;
 	TypedArray<PackedVector2Array> outlines;
@@ -38,14 +39,14 @@ public:
 	GranularSimulation();
 	~GranularSimulation();
 
-	void initialize_grid(std::vector<Particle*> *ps);
+	void initialize_grid(std::vector<Packet*> *ps);
 	void step(int iterations);
 
-	void create_particle(int row, int col, int typeID);
+	void create_particle(int row, int col, int type);
 	int destroy_particle(int row, int col);
 	void fill_id_pool(std::unordered_set<int> *idPool);
-	void assing_id(Particle* particle);
-	void remove_id(Particle* particle);
+	void assign_id(Packet* packet);
+	void remove_id(Packet* packets);
 	void swap(int rowA, int colA, int rowB, int colB);
 	bool is_in_bounds(int row, int col);
 	bool is_swappable(int rowA, int colA, int rowB, int colB);

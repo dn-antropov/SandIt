@@ -2,6 +2,13 @@ using Godot;
 
 public partial class Common : Node
 {
+    public enum PacketType
+    {
+        Nothing,
+        Wall,
+        Basic,
+        Spam
+    }
     public static Main main;
     public static RenderSim renderSim;
 

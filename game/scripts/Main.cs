@@ -1,16 +1,10 @@
 using Godot;
-using Godot.NativeInterop;
-using System;
-using System.Linq;
-
-
-
 
 public partial class Main : Node
 {
 	[Signal]
 	public delegate void UpdateSimEventHandler();
-	
+
 	Variant simulation;
 
 	double elapsedTime = 0;
@@ -50,8 +44,8 @@ public partial class Main : Node
 		return isInBounds;
 	}
 
-	public void Draw(Vector2I position) {
-		simulation.AsGodotObject().Call("create_particle", position.X, position.Y, 0);
+	public void Draw(Vector2I position, int type) {
+		simulation.AsGodotObject().Call("create_particle", position.X, position.Y, type);
 	}
 
 	public int Erase(Vector2I position)

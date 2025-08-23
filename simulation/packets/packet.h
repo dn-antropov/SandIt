@@ -1,15 +1,12 @@
-//Basic particle class every element inherits from
-
 #pragma once
 
 class GranularSimulation;
 
-#include "../granular_simulation.h"
-
-class Particle {
+class Packet {
 public:
     int id = -1;
     int type = -1;
+    double density = 0;
 
 private:
     bool isUpdated = false;
@@ -19,9 +16,9 @@ public:
     GranularSimulation *sim;
     virtual void update(GranularSimulation *sim, int row, int col) = 0;
 
-    virtual double get_density() = 0;
-
-    virtual uint32_t get_color() = 0;
+    double get_density() {
+        return density;
+    };
 
     bool get_is_updated() {
         return isUpdated;

@@ -1,15 +1,15 @@
 #pragma once
 
-#include "../particle.h"
+#include "../../granular_simulation.h"
+#include "../packet.h"
+#include "../packet_types.h"
 
-class Sand: public Particle {
-
-private:
-    uint32_t color = 0xf1c232;
+class Spam: public Packet {
 
 public:
-    Sand() {
-        type = 1;
+    Spam() {
+        type = PacketType::ESpam;
+        density = 1.0;
     }
     void update(GranularSimulation *sim, int row, int col) override {
         // color = 0xf1c232;
@@ -27,13 +27,4 @@ public:
             sim->swap(row, col, row + 1, col + 1);
         }
     }
-
-    double get_density() override {
-        return 2.0;
-    }
-
-    uint32_t get_color() override {
-        return color;
-    }
-
 };
