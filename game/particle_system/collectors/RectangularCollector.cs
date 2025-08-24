@@ -10,7 +10,6 @@ public partial class RectangularCollector : Node2D
     private int _x, _y = 0;
 
     private double elapsedTime = 0;
-    private int score = 0;
 
     [Export]
     public double CollectInterval = 1;
@@ -95,6 +94,7 @@ public partial class RectangularCollector : Node2D
 
     private void CollectNPackets(int x, int y, int width, int height, int N)
     {
+        int score = 0;
         for (int p = 0; p < N; p++)
         {
             Vector2I position = new Vector2I(GD.RandRange(x, x + width), GD.RandRange(y, y + height));
@@ -104,10 +104,12 @@ public partial class RectangularCollector : Node2D
                 score++;
             }
         }
+        Common.economy.AddPacketsConsumed(score);
     }
 
     private void CollectAllPackets(int x, int y, int width, int height)
     {
+        int score = 0;
         for (int px = x; px < (x + width); px++)
         {
             for (int py = y; py < (y + height); py++)

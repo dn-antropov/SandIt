@@ -11,6 +11,7 @@ public partial class Common : Node
     }
     public static Main main;
     public static RenderSim renderSim;
+    public static EconomyManager economy;
 
     // 1080/256
     public static float pixelScale = 8F;
@@ -19,5 +20,6 @@ public partial class Common : Node
 	{
 		main = GetTree().Root.GetNode<Main>("Main");
         renderSim = GetNode<RenderSim>("/root/Main/RenderSim");
+        economy = GetNode<EconomyManager>("/root/Main/Economy");
 	}
 }

@@ -1,15 +1,22 @@
-[gd_scene load_steps=7 format=3 uid="uid://btqdrnr04bjyy"]
+[gd_scene load_steps=10 format=3 uid="uid://btqdrnr04bjyy"]
 
 [ext_resource type="Script" uid="uid://b4kwovl6cors0" path="res://scripts/Main.cs" id="1_jyhfs"]
 [ext_resource type="PackedScene" uid="uid://mypqaqg40evy" path="res://particle_system/emitters/RectangularEmitter.tscn" id="2_choun"]
 [ext_resource type="Script" uid="uid://bi7fu0nxiy7lv" path="res://scripts/ui/RenderSim.cs" id="2_nplto"]
+[ext_resource type="Script" uid="uid://clvd673xhqcud" path="res://scripts/managers/EconomyManager.cs" id="2_o6xl0"]
 [ext_resource type="Material" uid="uid://bq1vupdd3shhr" path="res://materials/sand.tres" id="2_tipki"]
 [ext_resource type="PackedScene" uid="uid://ccolqx5c2a5uq" path="res://particle_system/collectors/RectangularCollector.tscn" id="5_tbgi4"]
+[ext_resource type="FontFile" uid="uid://bn5c6p3ijdp5k" path="res://fonts/PixelifySans-Regular.ttf" id="5_tipki"]
+[ext_resource type="Script" uid="uid://dvn6a2wdp1ob2" path="res://particle_system/collectors/XYDestructor.cs" id="6_tipki"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tipki"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_jyhfs")
+
+[node name="Economy" type="Node" parent="." node_paths=PackedStringArray("score")]
+script = ExtResource("2_o6xl0")
+score = NodePath("../CanvasLayer/Interface/Score")
 
 [node name="RenderSim" type="TextureRect" parent="."]
 texture_filter = 1
@@ -21,11 +28,32 @@ script = ExtResource("2_nplto")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="UI" type="Control" parent="CanvasLayer"]
+[node name="Interface" type="Control" parent="CanvasLayer"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 1024.0
-offset_bottom = 1024.0
+offset_left = 1024.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="ScoreLabel" type="RichTextLabel" parent="CanvasLayer/Interface"]
+offset_right = 362.0
+offset_bottom = 140.0
+theme_override_fonts/normal_font = ExtResource("5_tipki")
+theme_override_font_sizes/normal_font_size = 96
+text = "Score"
+
+[node name="Score" type="RichTextLabel" parent="CanvasLayer/Interface"]
+offset_left = 300.0
+offset_right = 662.0
+offset_bottom = 140.0
+theme_override_fonts/normal_font = ExtResource("5_tipki")
+theme_override_font_sizes/normal_font_size = 96
+text = "000"
+
+[node name="XYDestructor" type="Node" parent="."]
+script = ExtResource("6_tipki")
+Radius = 16
+Cooldown = 0.5
 
 [node name="RectangularEmitter" parent="." instance=ExtResource("2_choun")]
 SpawnInterval = 0.016
