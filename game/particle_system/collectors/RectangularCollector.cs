@@ -66,7 +66,8 @@ public partial class RectangularCollector : Node2D
 
     public override void _Draw()
     {
-        if (Engine.IsEditorHint())
+        //if (Engine.IsEditorHint())
+        if (true)
         {
             var rect = new Rect2(new Vector2(_x, _y), new Vector2(_width, _height));
             DrawRect(rect, new Color(0, 1, 0, 0.5f), true);
@@ -77,6 +78,7 @@ public partial class RectangularCollector : Node2D
     {
         if (Engine.IsEditorHint())
             return;
+        
         base._Process(delta);
         elapsedTime += delta;
 
