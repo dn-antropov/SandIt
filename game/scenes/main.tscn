@@ -59,7 +59,7 @@ Radius = 16
 Cooldown = 0.5
 
 [node name="RectangularEmitter" parent="." instance=ExtResource("2_choun")]
-SpawnInterval = 0.016
+SpawnInterval = 0.032
 SpawnAmount = 5
 weights = Dictionary[int, int]({
 2: 99,
@@ -76,5 +76,6 @@ X = 384
 Y = 769
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(149, 762, 456, 351, 909, 551)
+color = Color(1, 1, 1, 0)
+polygon = PackedVector2Array(148, 675, 529, 178, 921, 676)
 script = ExtResource("9_85g3d")

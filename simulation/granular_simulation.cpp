@@ -45,22 +45,36 @@ void GranularSimulation::step(int iterations) {
                 packets[row * width + col]->set_is_moving(false);
             }
         }
-        for (int row = height-1; row >=0; row--) {
-            // fix left to right bias
-            bool left_to_right = (randf() < 0.5f);
-            if (left_to_right) {
-                for (int col = 0; col < width; col++) {
-                    if (!packets[row * width + col]->get_is_updated())
-                        packets[row * width + col]->update(this, row, col);
-                }
-            }
-            else {
-                for (int col = width - 1; col >= 0; col--) {
-                    if (!packets[row * width + col]->get_is_updated())
-                        packets[row * width + col]->update(this, row, col);
-                }
-            }
+        // for (int row = height-1; row >=0; row--) {
+        //     // fix left to right bias
+        //     bool left_to_right = (randf() < 0.5f);
+        //     if (left_to_right) {
+        //         for (int col = 0; col < width; col++) {
+        //             if (!packets[row * width + col]->get_is_updated())
+        //                 packets[row * width + col]->update(this, row, col);
+        //         }
+        //     }
+        //     else {
+        //         for (int col = width - 1; col >= 0; col--) {
+        //             if (!packets[row * width + col]->get_is_updated())
+        //                 packets[row * width + col]->update(this, row, col);
+        //         }
+        //     }
 
+        // }
+        int block_size = 2;
+        for (int block_row = height - block_size; block_row >= 0; block_row -= block_size) {
+            bool left_to_right = (block_row % 2 == 0);
+            if (left_to_right) {
+                for (int block_col = 0; block_col < width; block_col += block_size) {
+                    process_block(block_row, block_col, block_size);
+                }
+            } else {
+                int start_col = ((width - 1) / block_size) * block_size;
+                for (int block_col = start_col; block_col >= 0; block_col -= block_size) {
+                    process_block(block_row, block_col, block_size);
+                }
+            }
         }
     }
 
@@ -68,6 +82,37 @@ void GranularSimulation::step(int iterations) {
     // std::vector<MarchingSquares::Result> rs = MarchingSquares::FindPerimeters(width, height, 16, data);
     // pack_outlines(rs);
     // simplify_outlines();
+}
+
+void GranularSimulation::process_block(int start_row, int start_col, int block_size) {
+    std::vector<std::pair<int, int>> positions;
+
+    for (int r = start_row; r < start_row + block_size; r++) {
+        for (int c = start_col; c < start_col + block_size; c++) {
+            positions.push_back({r, c});
+        }
+    }
+
+    // Shuffle positions within the block
+    for (int i = positions.size() - 1; i > 0; i--) {
+        int j = (int)(randf() * (i + 1));
+        std::swap(positions[i], positions[j]);
+    }
+
+    // Update particles in random order within the block
+    for (auto pos : positions) {
+        int row = pos.first;
+        int col = pos.second;
+
+        // if (row >= 0 && row < height && col >= 0 && col < width) {
+            int idx = row * width + col;
+            // if (idx < (width * height)) {
+                if (!packets[idx]->get_is_updated()) {
+                    packets[idx]->update(this, row, col);
+                }
+            // }
+        // }
+    }
 }
 
 void GranularSimulation::create_particle(int row, int col, int type) {
@@ -162,7 +207,7 @@ bool GranularSimulation::is_swappable(int rowA, int colA, int rowB, int colB) {
 
 inline float GranularSimulation::randf() {
     g_seed = (214013 * g_seed + 2531011);
-    return ((g_seed>>16) & 0x7FFF) / (double) 0x7FFF;
+    return ((g_seed>>16) & 0x7FFF) / (double) (0x7FFF + 1);
 }
 
 Vector2i GranularSimulation::get_dimensions() {
