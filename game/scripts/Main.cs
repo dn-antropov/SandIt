@@ -9,7 +9,7 @@ public partial class Main : Node
 
 	double elapsedTime = 0;
 
-	public double timestep = 0.066;
+	public double timestep = 1.0;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -39,7 +39,18 @@ public partial class Main : Node
 		return renderData;
 	}
 
-	public bool IsInBounds(Vector2I position) {
+	public byte[] GetPreviosRenderData() {
+		byte[] renderData = simulation.AsGodotObject().Call("get_previous_render_data").AsByteArray();
+		return renderData;
+	}
+
+	public byte[] GetInterpolatedRenderData(float alpha = 0.0f, int renderScale = 16) {
+		byte[] renderData = simulation.AsGodotObject().Call("get_interpolated_render_data", alpha, renderScale).AsByteArray();
+		return renderData;
+	}
+
+	public bool IsInBounds(Vector2I position)
+	{
 		bool isInBounds = simulation.AsGodotObject().Call("is_in_bounds", position.X, position.Y).AsBool();
 		return isInBounds;
 	}

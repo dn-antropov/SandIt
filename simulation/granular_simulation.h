@@ -23,14 +23,15 @@ private:
 	std::vector<Packet*> packets;
 	std::unordered_set<int> idPool;
 	PackedByteArray render_data;
+	PackedByteArray position_data;
 	TypedArray<PackedVector2Array> outlines;
 	TypedArray<PackedVector2Array> simplified_outlines;
 
 public:
 	unsigned int g_seed = 12345;
 
-	int width = 128;
-    int height = 128;
+	int width = 64;
+    int height = 64;
 
 protected:
 	static void _bind_methods();
@@ -42,8 +43,8 @@ public:
 	void initialize_grid(std::vector<Packet*> *ps);
 	void step(int iterations);
 
-	void create_particle(int row, int col, int type);
-	int destroy_particle(int row, int col);
+	void create_packet(int row, int col, int type);
+	int destroy_packet(int row, int col);
 	void fill_id_pool(std::unordered_set<int> *idPool);
 	void assign_id(Packet* packet);
 	void remove_id(Packet* packets);
@@ -61,4 +62,5 @@ public:
 	TypedArray<PackedVector2Array> get_outlines();
 	TypedArray<PackedVector2Array> get_simplified_outlines();
 	PackedByteArray get_render_data();
+	PackedByteArray get_interpolated_render_data(float alpha, int render_scale);
 };

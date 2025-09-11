@@ -11,6 +11,8 @@
 [ext_resource type="Script" uid="uid://x8n2uy3nj8xg" path="res://particle_system/emitters/WallEmitter.cs" id="9_85g3d"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tipki"]
+width = 1024
+height = 1024
 
 [node name="Main" type="Node"]
 script = ExtResource("1_jyhfs")
@@ -59,7 +61,7 @@ Radius = 16
 Cooldown = 0.5
 
 [node name="RectangularEmitter" parent="." instance=ExtResource("2_choun")]
-SpawnInterval = 0.032
+SpawnInterval = 2.0
 SpawnAmount = 5
 weights = Dictionary[int, int]({
 2: 99,

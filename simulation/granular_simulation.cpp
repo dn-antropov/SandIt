@@ -24,10 +24,13 @@ void GranularSimulation::initialize_grid(std::vector<Packet*> *ps) {
     for (int i = 0; i < width*height; i++) {
         ps->at(i) = new Nothing();
         assign_id(ps->at(i));
+        ps->at(i)->prevPosition = i;
     }
 
     render_data = PackedByteArray();
+    position_data = PackedByteArray();
     render_data.resize(width * height * 3);
+    position_data.resize(width * height * 3);
 }
 
 void GranularSimulation::fill_id_pool(std::unordered_set<int> *idPool) {
@@ -41,27 +44,11 @@ void GranularSimulation::step(int iterations) {
     for (int i = 0; i < iterations; i++) {
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
+                packets[row * width + col]->prevPosition = row * width + col;
                 packets[row * width + col]->set_is_updated(false);
                 packets[row * width + col]->set_is_moving(false);
             }
         }
-        // for (int row = height-1; row >=0; row--) {
-        //     // fix left to right bias
-        //     bool left_to_right = (randf() < 0.5f);
-        //     if (left_to_right) {
-        //         for (int col = 0; col < width; col++) {
-        //             if (!packets[row * width + col]->get_is_updated())
-        //                 packets[row * width + col]->update(this, row, col);
-        //         }
-        //     }
-        //     else {
-        //         for (int col = width - 1; col >= 0; col--) {
-        //             if (!packets[row * width + col]->get_is_updated())
-        //                 packets[row * width + col]->update(this, row, col);
-        //         }
-        //     }
-
-        // }
         int block_size = 2;
         for (int block_row = height - block_size; block_row >= 0; block_row -= block_size) {
             bool left_to_right = (block_row % 2 == 0);
@@ -103,19 +90,14 @@ void GranularSimulation::process_block(int start_row, int start_col, int block_s
     for (auto pos : positions) {
         int row = pos.first;
         int col = pos.second;
-
-        // if (row >= 0 && row < height && col >= 0 && col < width) {
-            int idx = row * width + col;
-            // if (idx < (width * height)) {
-                if (!packets[idx]->get_is_updated()) {
-                    packets[idx]->update(this, row, col);
-                }
-            // }
-        // }
+        int idx = row * width + col;
+        if (!packets[idx]->get_is_updated()) {
+            packets[idx]->update(this, row, col);
+        }
     }
 }
 
-void GranularSimulation::create_particle(int row, int col, int type) {
+void GranularSimulation::create_packet(int row, int col, int type) {
     if (!is_in_bounds(row, col))
         return;
 
@@ -147,9 +129,10 @@ void GranularSimulation::create_particle(int row, int col, int type) {
 
     assign_id(packet);
     packets[row * width + col] = packet;
+    packets[row * width + col]->prevPosition = row * width + col;
 }
 
-int GranularSimulation::destroy_particle(int row, int col) {
+int GranularSimulation::destroy_packet(int row, int col) {
     if (!is_in_bounds(row, col))
         return -1;
     int type = packets[row * width + col]->type;
@@ -179,6 +162,7 @@ void GranularSimulation::swap(int rowA, int colA, int rowB, int colB) {
         return;
 
     Packet *tempP = packets[rowA * width + colA];
+
     packets[rowA * width + colA] = packets[rowB * width + colB];
     packets[rowB * width + colB] = tempP;
     tempP = NULL;
@@ -188,7 +172,6 @@ void GranularSimulation::swap(int rowA, int colA, int rowB, int colB) {
 
     packets[rowA * width + colA]->set_is_moving(true);
     packets[rowB * width + colB]->set_is_moving(true);
-
 }
 
 bool GranularSimulation::is_in_bounds(int row, int col) {
@@ -230,6 +213,59 @@ PackedByteArray GranularSimulation::get_render_data() {
     return render_data;
 }
 
+PackedByteArray GranularSimulation::get_interpolated_render_data(float alpha, int render_scale) {
+    int render_width = width * render_scale;
+    int render_height = height * render_scale;
+
+    PackedByteArray interpolated_data;
+    interpolated_data.resize(render_width * render_height * 3);
+
+    // Clear the render data
+    for (int i = 0; i < render_width * render_height * 3; i++) {
+        interpolated_data.set(i, 0);
+    }
+
+    // For each particle, calculate interpolated position and render it
+    for (int row = 0; row < height; row++) {
+        for (int col = 0; col < width; col++) {
+            Packet* packet = packets[row * width + col];
+
+            if (packet->type == PacketType::ENothing)
+                continue;
+
+            // Get previous position
+            int prev_linear = packet->prevPosition;
+            int prev_row = prev_linear / width;
+            int prev_col = prev_linear % width;
+
+            // Current position
+            int curr_row = row;
+            int curr_col = col;
+
+            // Interpolate in simulation space
+            float interp_row = prev_row + alpha * (curr_row - prev_row);
+            float interp_col = prev_col + alpha * (curr_col - prev_col);
+
+            // Convert to render space
+            float render_x = (interp_col + 0.5f) * render_scale;
+            float render_y = (interp_row + 0.5f) * render_scale;
+
+            // Draw particle (simple approach - just center pixel)
+            int pixel_x = (int)round(render_x);
+            int pixel_y = (int)round(render_y);
+
+            if (pixel_x >= 0 && pixel_x < render_width && pixel_y >= 0 && pixel_y < render_height) {
+                int idx = (pixel_y * render_width + pixel_x) * 3;
+                interpolated_data.set(idx, packet->type);
+                interpolated_data.set(idx + 1, packet->id & 0xFF);
+                interpolated_data.set(idx + 2, (packet->id >> 8) & 0xFF);
+            }
+        }
+    }
+
+    return interpolated_data;
+}
+
 TypedArray<PackedVector2Array> GranularSimulation::get_outlines() {
     return outlines;
 }
@@ -266,10 +302,11 @@ void GranularSimulation::simplify_outlines() {
 
 void GranularSimulation::_bind_methods() {
     ClassDB::bind_method(D_METHOD("step"), &GranularSimulation::step);
-    ClassDB::bind_method(D_METHOD("create_particle"), &GranularSimulation::create_particle);
-    ClassDB::bind_method(D_METHOD("destroy_particle"), &GranularSimulation::destroy_particle);
+    ClassDB::bind_method(D_METHOD("create_particle"), &GranularSimulation::create_packet);
+    ClassDB::bind_method(D_METHOD("destroy_particle"), &GranularSimulation::destroy_packet);
     ClassDB::bind_method(D_METHOD("get_dimensions"), &GranularSimulation::get_dimensions);
     ClassDB::bind_method(D_METHOD("get_render_data"), &GranularSimulation::get_render_data);
+    ClassDB::bind_method(D_METHOD("get_interpolated_render_data", "alpha", "render_scale"), &GranularSimulation::get_interpolated_render_data);
     ClassDB::bind_method(D_METHOD("get_outlines"), &GranularSimulation::get_outlines);
     ClassDB::bind_method(D_METHOD("get_simplified_outlines"), &GranularSimulation::get_simplified_outlines);
     ClassDB::bind_method(D_METHOD("is_in_bounds"), &GranularSimulation::is_in_bounds);

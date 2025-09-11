@@ -7,6 +7,7 @@ public:
     int id = -1;
     int type = -1;
     double density = 0;
+    int prevPosition = -1;
 
 private:
     bool isUpdated = false;

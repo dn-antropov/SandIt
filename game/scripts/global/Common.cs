@@ -13,8 +13,7 @@ public partial class Common : Node
     public static RenderSim renderSim;
     public static EconomyManager economy;
 
-    // 1080/256
-    public static float pixelScale = 8F;
+    public static float pixelScale = 16F;
 
     public override void _Ready()
 	{
