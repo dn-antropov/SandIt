@@ -1,0 +1,16 @@
+[gd_scene load_steps=5 format=3 uid="uid://broa3m51apm5r"]
+
+[ext_resource type="Script" uid="uid://cu3gi80re015a" path="res://particle_system/packets/Packet.cs" id="1_c1ukt"]
+[ext_resource type="Texture2D" uid="uid://brh8mxt7x0w24" path="res://particle_system/packets/textures/T_Packet.svg" id="1_til41"]
+[ext_resource type="Texture2D" uid="uid://c17hfwyg2nb7a" path="res://particle_system/packets/textures/T_Bug_.svg" id="3_7e5yl"]
+[ext_resource type="Texture2D" uid="uid://bgrhm16ymh6sn" path="res://particle_system/packets/textures/T_Wall.svg" id="4_hrtvl"]
+
+[node name="Packet" type="Sprite2D"]
+texture_filter = 1
+texture = ExtResource("1_til41")
+script = ExtResource("1_c1ukt")
+textures = Dictionary[int, Texture2D]({
+1: ExtResource("4_hrtvl"),
+2: ExtResource("1_til41"),
+3: ExtResource("3_7e5yl")
+})

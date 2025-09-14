@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://2mgtp3ayng6y"]
+
+[ext_resource type="Script" uid="uid://dee3bp3vcg68u" path="res://particle_system/collectors/spam_eater/SpamEater.cs" id="1_vt2k0"]
+
+[node name="SpamEater" type="Node2D"]
+script = ExtResource("1_vt2k0")

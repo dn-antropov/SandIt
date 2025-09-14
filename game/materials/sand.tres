@@ -9,4 +9,3 @@ height = 64
 [resource]
 shader = ExtResource("1_fiptr")
 shader_parameter/in_texture = SubResource("NoiseTexture2D_hk711")
-shader_parameter/particle_size = 8.0

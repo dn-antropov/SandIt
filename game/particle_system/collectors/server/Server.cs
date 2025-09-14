@@ -1,13 +1,11 @@
 using Godot;
-using System;
-using System.Security.Principal;
 
 [Tool]
-public partial class RectangularCollector : Node2D
+public partial class Server : Node2D
 {
     private int _width, _height = 100;
 
-    private int _x, _y = 0;
+    // private int _x, _y = 0;
 
     private double elapsedTime = 0;
 
@@ -40,36 +38,12 @@ public partial class RectangularCollector : Node2D
         }
     }
 
-    [Export]
-    public int X
-    {
-        get => _x;
-        set
-        {
-            if (_x == value) return;
-            _x = value;
-            QueueRedraw();
-        }
-    }
-
-    [Export]
-    public int Y
-    {
-        get => _y;
-        set
-        {
-            if (_y == value) return;
-            _y = value;
-            QueueRedraw();
-        }
-    }
-
     public override void _Draw()
     {
-        //if (Engine.IsEditorHint())
+        // if (Engine.IsEditorHint())
         if (true)
         {
-            var rect = new Rect2(new Vector2(_x, _y), new Vector2(_width, _height));
+            var rect = new Rect2(new Vector2(0, 0), new Vector2(_width, _height));
             DrawRect(rect, new Color(0, 1, 0, 0.5f), true);
         }
     }
@@ -78,7 +52,7 @@ public partial class RectangularCollector : Node2D
     {
         if (Engine.IsEditorHint())
             return;
-        
+
         base._Process(delta);
         elapsedTime += delta;
 
@@ -86,8 +60,8 @@ public partial class RectangularCollector : Node2D
         {
             int scaledWidth = (int)(_width / Common.pixelScale);
             int scaledHeight = (int)(_height / Common.pixelScale);
-            int scaledX = (int)(_y / Common.pixelScale);
-            int scaledY = (int)(_x / Common.pixelScale);
+            int scaledX = (int)(Position.Y / Common.pixelScale);
+            int scaledY = (int)(Position.X / Common.pixelScale);
             CollectNPackets(scaledX, scaledY, scaledWidth, scaledHeight, PacketsToCollect);
             //CollectAllPackets(scaledX, scaledY, scaledWidth, scaledHeight);
             elapsedTime = 0;
@@ -96,17 +70,23 @@ public partial class RectangularCollector : Node2D
 
     private void CollectNPackets(int x, int y, int width, int height, int N)
     {
-        int score = 0;
+        int packets = 0;
+        int spam = 0;
         for (int p = 0; p < N; p++)
         {
             Vector2I position = new Vector2I(GD.RandRange(x, x + width), GD.RandRange(y, y + height));
             int type = CollectPacket(position);
             if (type == (int)Common.PacketType.Basic)
             {
-                score++;
+                packets++;
+            }
+            else if (type == (int)Common.PacketType.Spam)
+            {
+                spam++;
             }
         }
-        Common.economy.AddPacketsConsumed(score);
+        Common.economy.AddPackets(packets);
+        Common.economy.AddSpam(spam);
     }
 
     private void CollectAllPackets(int x, int y, int width, int height)

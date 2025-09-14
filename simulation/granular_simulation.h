@@ -23,9 +23,11 @@ private:
 	std::vector<Packet*> packets;
 	std::unordered_set<int> idPool;
 	PackedByteArray render_data;
-	PackedByteArray position_data;
+	TypedArray<Vector4> packets_to_render;
 	TypedArray<PackedVector2Array> outlines;
 	TypedArray<PackedVector2Array> simplified_outlines;
+
+
 
 public:
 	unsigned int g_seed = 12345;
@@ -62,5 +64,5 @@ public:
 	TypedArray<PackedVector2Array> get_outlines();
 	TypedArray<PackedVector2Array> get_simplified_outlines();
 	PackedByteArray get_render_data();
-	PackedByteArray get_interpolated_render_data(float alpha, int render_scale);
+	TypedArray<Vector4> get_interpolated_render_data(float alpha, int render_scale);
 };

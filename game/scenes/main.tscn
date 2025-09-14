@@ -1,11 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://btqdrnr04bjyy"]
+[gd_scene load_steps=12 format=3 uid="uid://btqdrnr04bjyy"]
 
 [ext_resource type="Script" uid="uid://b4kwovl6cors0" path="res://scripts/Main.cs" id="1_jyhfs"]
 [ext_resource type="PackedScene" uid="uid://mypqaqg40evy" path="res://particle_system/emitters/RectangularEmitter.tscn" id="2_choun"]
 [ext_resource type="Script" uid="uid://bi7fu0nxiy7lv" path="res://scripts/ui/RenderSim.cs" id="2_nplto"]
 [ext_resource type="Script" uid="uid://clvd673xhqcud" path="res://scripts/managers/EconomyManager.cs" id="2_o6xl0"]
 [ext_resource type="Material" uid="uid://bq1vupdd3shhr" path="res://materials/sand.tres" id="2_tipki"]
-[ext_resource type="PackedScene" uid="uid://ccolqx5c2a5uq" path="res://particle_system/collectors/RectangularCollector.tscn" id="5_tbgi4"]
+[ext_resource type="PackedScene" uid="uid://broa3m51apm5r" path="res://particle_system/packets/packet.tscn" id="5_choun"]
+[ext_resource type="PackedScene" uid="uid://ccolqx5c2a5uq" path="res://particle_system/collectors/server/Server.tscn" id="5_tbgi4"]
 [ext_resource type="FontFile" uid="uid://bn5c6p3ijdp5k" path="res://fonts/PixelifySans-Regular.ttf" id="5_tipki"]
 [ext_resource type="Script" uid="uid://dvn6a2wdp1ob2" path="res://particle_system/collectors/XYDestructor.cs" id="6_tipki"]
 [ext_resource type="Script" uid="uid://x8n2uy3nj8xg" path="res://particle_system/emitters/WallEmitter.cs" id="9_85g3d"]
@@ -16,6 +17,7 @@ height = 1024
 
 [node name="Main" type="Node"]
 script = ExtResource("1_jyhfs")
+timestep = 0.1
 
 [node name="Economy" type="Node" parent="." node_paths=PackedStringArray("score")]
 script = ExtResource("2_o6xl0")
@@ -28,6 +30,7 @@ offset_right = 1024.0
 offset_bottom = 1024.0
 texture = SubResource("NoiseTexture2D_tipki")
 script = ExtResource("2_nplto")
+spriteScene = ExtResource("5_choun")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -61,7 +64,7 @@ Radius = 16
 Cooldown = 0.5
 
 [node name="RectangularEmitter" parent="." instance=ExtResource("2_choun")]
-SpawnInterval = 2.0
+SpawnInterval = 0.2
 SpawnAmount = 5
 weights = Dictionary[int, int]({
 2: 99,
@@ -70,14 +73,18 @@ weights = Dictionary[int, int]({
 Width = 1024
 Height = 48
 
-[node name="RectangularCollector" parent="." instance=ExtResource("5_tbgi4")]
+[node name="Server" parent="." instance=ExtResource("5_tbgi4")]
+position = Vector2(384, 769)
 PacketsToCollect = 16
 Width = 256
 Height = 256
-X = 384
-Y = 769
 
-[node name="Polygon2D" type="Polygon2D" parent="."]
-color = Color(1, 1, 1, 0)
-polygon = PackedVector2Array(148, 675, 529, 178, 921, 676)
+[node name="Wall_01" type="Polygon2D" parent="."]
+color = Color(0, 1, 1, 0.105882)
+polygon = PackedVector2Array(-8, 112, 399, 1077, -6, 718)
+script = ExtResource("9_85g3d")
+
+[node name="Wall_02" type="Polygon2D" parent="."]
+color = Color(0, 1, 1, 0.105882)
+polygon = PackedVector2Array(1019, 142, 618, 1076, 1019, 787)
 script = ExtResource("9_85g3d")

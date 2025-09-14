@@ -3,12 +3,23 @@ using Godot;
 public partial class EconomyManager : Node
 {
     [Export]
-    public RichTextLabel score;
-    private int packetsConsumed = 0;
+    public RichTextLabel balance;
+    public RichTextLabel harm;
+    private int packets = 0;
 
-    public int PacketsConsumed
+    private int spam = 0;
+
+    public int Packets
     {
-        get => packetsConsumed;
+        get => packets;
+        set
+        {
+            return;
+        }
+    }
+    public int Spam
+    {
+        get => spam;
         set
         {
             return;
@@ -22,11 +33,17 @@ public partial class EconomyManager : Node
     public override void _Process(double delta)
     {
         base._Process(delta);
-        score.Text = packetsConsumed.ToString();
+        balance.Text = packets.ToString();
+        harm.Text = spam.ToString();
     }
 
-    public void AddPacketsConsumed(int numPackets)
+    public void AddPackets(int numPackets)
     {
-        packetsConsumed += numPackets;
+        packets += numPackets;
+    }
+
+    public void AddSpam(int numPackets)
+    {
+        spam += numPackets;
     }
 }

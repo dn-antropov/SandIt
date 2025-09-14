@@ -28,9 +28,10 @@ void GranularSimulation::initialize_grid(std::vector<Packet*> *ps) {
     }
 
     render_data = PackedByteArray();
-    position_data = PackedByteArray();
     render_data.resize(width * height * 3);
-    position_data.resize(width * height * 3);
+
+    packets_to_render = TypedArray<Vector4>();
+    packets_to_render.resize(width * height);
 }
 
 void GranularSimulation::fill_id_pool(std::unordered_set<int> *idPool) {
@@ -213,17 +214,10 @@ PackedByteArray GranularSimulation::get_render_data() {
     return render_data;
 }
 
-PackedByteArray GranularSimulation::get_interpolated_render_data(float alpha, int render_scale) {
+TypedArray<Vector4> GranularSimulation::get_interpolated_render_data(float alpha, int render_scale) {
     int render_width = width * render_scale;
     int render_height = height * render_scale;
 
-    PackedByteArray interpolated_data;
-    interpolated_data.resize(render_width * render_height * 3);
-
-    // Clear the render data
-    for (int i = 0; i < render_width * render_height * 3; i++) {
-        interpolated_data.set(i, 0);
-    }
 
     // For each particle, calculate interpolated position and render it
     for (int row = 0; row < height; row++) {
@@ -231,39 +225,50 @@ PackedByteArray GranularSimulation::get_interpolated_render_data(float alpha, in
             Packet* packet = packets[row * width + col];
 
             if (packet->type == PacketType::ENothing)
-                continue;
+            {
+                packets_to_render.set(packet->id, Vector4(float(packet->id), float(packet->type), float(row), float(col)));
+            } else {
+                // Get previous position
+                int prev_linear = packet->prevPosition;
+                int prev_row = prev_linear / width;
+                int prev_col = prev_linear % width;
 
-            // Get previous position
-            int prev_linear = packet->prevPosition;
-            int prev_row = prev_linear / width;
-            int prev_col = prev_linear % width;
+                // Current position
+                int curr_row = row;
+                int curr_col = col;
+                float interp_row, interp_col;
+                // if (prev_row!= curr_row && prev_col != curr_col) {
+                //     if (alpha <= 0.5) {
+                //         float horizontal_alpha = alpha * 2;
+                //         horizontal_alpha = pow(horizontal_alpha, 1.2);
+                //         interp_col = prev_col + horizontal_alpha * (curr_col - prev_col);
+                //         interp_row = prev_row;
 
-            // Current position
-            int curr_row = row;
-            int curr_col = col;
+                //     } else {
+                //         float vertical_alpha = (alpha - 0.5) * 2;
+                //         vertical_alpha = pow(vertical_alpha, 1.2);
+                //         interp_col = curr_col;
+                //         interp_row = prev_row + vertical_alpha * (curr_row - prev_row);
 
-            // Interpolate in simulation space
-            float interp_row = prev_row + alpha * (curr_row - prev_row);
-            float interp_col = prev_col + alpha * (curr_col - prev_col);
+                //     }
+                // } else {
+                    interp_col = prev_col + alpha * (curr_col - prev_col);
+                    interp_row = prev_row + alpha * (curr_row - prev_row);
+                // }
 
-            // Convert to render space
-            float render_x = (interp_col + 0.5f) * render_scale;
-            float render_y = (interp_row + 0.5f) * render_scale;
 
-            // Draw particle (simple approach - just center pixel)
-            int pixel_x = (int)round(render_x);
-            int pixel_y = (int)round(render_y);
+                // Convert to render space
+                float render_x = (interp_col + 0.5f) * render_scale;
+                float render_y = (interp_row + 0.5f) * render_scale;
 
-            if (pixel_x >= 0 && pixel_x < render_width && pixel_y >= 0 && pixel_y < render_height) {
-                int idx = (pixel_y * render_width + pixel_x) * 3;
-                interpolated_data.set(idx, packet->type);
-                interpolated_data.set(idx + 1, packet->id & 0xFF);
-                interpolated_data.set(idx + 2, (packet->id >> 8) & 0xFF);
+                packets_to_render.set(packet->id, Vector4(float(packet->id), float(packet->type), render_x, render_y));
             }
+
+
         }
     }
 
-    return interpolated_data;
+    return packets_to_render;
 }
 
 TypedArray<PackedVector2Array> GranularSimulation::get_outlines() {

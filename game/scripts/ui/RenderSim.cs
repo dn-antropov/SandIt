@@ -3,9 +3,14 @@ using System;
 
 public partial class RenderSim : TextureRect
 {
+
+	[Export] public PackedScene spriteScene;
+
+	private Node2D spriteContainer;
+	private Node2D[] sprites;
 	// Called when the node enters the scene tree for the first time.
 	private bool idsPrinted = false;
-
+	private bool spritesInitialized = false;
 	int width = -1;
 	int height = -1;
 
@@ -22,7 +27,13 @@ public partial class RenderSim : TextureRect
 		material = (ShaderMaterial)Material;
 
 		texture = new ImageTexture();
-		// prevPositionsTexture = new ImageTexture();
+
+		if (spriteContainer == null)
+		{
+			spriteContainer = new Node2D();
+			spriteContainer.Name = "SpriteContainer";
+			AddChild(spriteContainer);
+		}
 	}
 
 	public override void _Process(double delta)
@@ -32,41 +43,68 @@ public partial class RenderSim : TextureRect
 			width = Common.main.GetDimensions().X;
 			height = Common.main.GetDimensions().Y;
 		}
+		CreateSprites();
+
 		stepTime += (float)delta;
 		alpha = stepTime / (float)Common.main.timestep;
 		alpha = Math.Clamp(alpha, 0.0F, 1.0F);
 
-		// if (Time.GetUnixTimeFromSystem() % 2 < 0.1) // Print every ~2 seconds
-		// {
-		// 	GD.Print($"Alpha: {alpha:F3}, StepTime: {stepTime:F3}, Timestep: {Common.main.timestep:F3}");
-		// }
-	    // Generate interpolated texture every frame
-		byte[] interpolatedData = Common.main.GetInterpolatedRenderData(alpha, (int)Common.pixelScale);
-
-		int renderWidth = width * (int)Common.pixelScale;
-		int renderHeight = height * (int)Common.pixelScale;
-		int expectedSize = renderWidth * renderHeight * 3;
-
-		if (interpolatedData.Length != expectedSize)
-		{
-			GD.PrintErr($"Data size mismatch: got {interpolatedData.Length}, expected {expectedSize}");
-			return;
-		}
-
-		texture.SetImage(Image.CreateFromData(renderWidth, renderHeight, false, Image.Format.Rgb8, interpolatedData));
-
-		material.SetShaderParameter("in_texture", texture);
+		UpdateSprites(alpha, (int)Common.pixelScale);
 	}
 	public void RepaintTextures()
 	{
 
+		if (width == -1 || height == -1)
+		{
+			width = Common.main.GetDimensions().X;
+			height = Common.main.GetDimensions().Y;
+		}
 
-		// byte[] data = Common.main.GetRenderData();
-		// byte[] positions = Common.main.GetInterpolatedRenderData(0, (int)Common.pixelScale);
-
-		// texture.SetImage(Image.CreateFromData(width, height, false, Image.Format.Rgb8, data));
-		// prevPositionsTexture.SetImage(Image.CreateFromData(width, height, false, Image.Format.Rgb8, positions));
-		// material.SetShaderParameter("in_texture", texture);
+		byte[] data = Common.main.GetRenderData();
+		texture.SetImage(Image.CreateFromData(width, height, false, Image.Format.Rgb8, data));
+		material.SetShaderParameter("in_texture", texture);
 		stepTime = 0;
+	}
+
+	private void CreateSprites()
+	{
+		if (spritesInitialized || width <= 0 || height <= 0)
+			return;
+
+		int totalSprites = width * height;
+		sprites = new Node2D[totalSprites];
+		for (int i = 0; i < totalSprites; i++)
+		{
+			Node2D newSprite = spriteScene.Instantiate<Node2D>();
+			spriteContainer.AddChild(newSprite);
+
+			newSprite.Position = new Vector2(i % width * Common.pixelScale, i / height * Common.pixelScale);
+			// Initially hide all sprites
+			newSprite.Visible = false;
+			sprites[i] = newSprite;
+
+		}
+
+		spritesInitialized = true;
+	}
+
+	private void UpdateSprites(float _alpha, int _scale)
+	{
+		Vector4[] packets = Common.main.GetInterpolatedRenderData(_alpha, _scale);
+		foreach (Vector4 packet in packets)
+		{
+			if (packet.Y <= 0)
+			{
+				sprites[(int)packet.X].Visible = false;
+			}
+			else
+			{
+				sprites[(int)packet.X].Visible = true;
+				Packet p = sprites[(int)packet.X] as Packet;
+				p.SetType((int)packet.Y);
+				sprites[(int)packet.X].Position = new Vector2(packet.Z, packet.W);
+			}
+
+		}
 	}
 }
