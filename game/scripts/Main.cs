@@ -52,17 +52,17 @@ public partial class Main : Node
 
 	public bool IsInBounds(Vector2I position)
 	{
-		bool isInBounds = simulation.AsGodotObject().Call("is_in_bounds", position.X, position.Y).AsBool();
+		bool isInBounds = simulation.AsGodotObject().Call("is_in_bounds", position.Y, position.X).AsBool();
 		return isInBounds;
 	}
 
 	public void Draw(Vector2I position, int type) {
-		simulation.AsGodotObject().Call("create_particle", position.X, position.Y, type);
+		simulation.AsGodotObject().Call("create_particle", position.Y, position.X, type);
 	}
 
 	public int Erase(Vector2I position)
 	{
-		int type = simulation.AsGodotObject().Call("destroy_particle", position.X, position.Y).AsInt32();
+		int type = simulation.AsGodotObject().Call("destroy_particle", position.Y, position.X).AsInt32();
 		return type;
 	}
 

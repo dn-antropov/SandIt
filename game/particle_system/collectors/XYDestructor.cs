@@ -63,6 +63,6 @@ public partial class XYDestructor : Node
     {
         return elapsedTime >= Cooldown &&
                !readyToDestroy &&
-               (Common.economy.PacketsConsumed >= pointCollectionCost);
+               (Common.economy.Packets >= pointCollectionCost);
     }
 }

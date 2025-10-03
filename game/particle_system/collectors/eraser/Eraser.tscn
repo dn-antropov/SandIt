@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dlaml7eykabo3"]
+
+[ext_resource type="Script" uid="uid://b1kkd8jq4fjy3" path="res://particle_system/collectors/eraser/Eraser.cs" id="1_unyc6"]
+
+[node name="Eraser" type="Node2D"]
+script = ExtResource("1_unyc6")

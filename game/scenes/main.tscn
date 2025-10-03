@@ -1,15 +1,16 @@
-[gd_scene load_steps=12 format=3 uid="uid://btqdrnr04bjyy"]
+[gd_scene load_steps=13 format=3 uid="uid://btqdrnr04bjyy"]
 
 [ext_resource type="Script" uid="uid://b4kwovl6cors0" path="res://scripts/Main.cs" id="1_jyhfs"]
 [ext_resource type="PackedScene" uid="uid://mypqaqg40evy" path="res://particle_system/emitters/RectangularEmitter.tscn" id="2_choun"]
 [ext_resource type="Script" uid="uid://bi7fu0nxiy7lv" path="res://scripts/ui/RenderSim.cs" id="2_nplto"]
 [ext_resource type="Script" uid="uid://clvd673xhqcud" path="res://scripts/managers/EconomyManager.cs" id="2_o6xl0"]
 [ext_resource type="Material" uid="uid://bq1vupdd3shhr" path="res://materials/sand.tres" id="2_tipki"]
+[ext_resource type="PackedScene" uid="uid://2mgtp3ayng6y" path="res://particle_system/collectors/spam_eater/SpamEater.tscn" id="2_ya4ey"]
 [ext_resource type="PackedScene" uid="uid://broa3m51apm5r" path="res://particle_system/packets/packet.tscn" id="5_choun"]
 [ext_resource type="PackedScene" uid="uid://ccolqx5c2a5uq" path="res://particle_system/collectors/server/Server.tscn" id="5_tbgi4"]
 [ext_resource type="FontFile" uid="uid://bn5c6p3ijdp5k" path="res://fonts/PixelifySans-Regular.ttf" id="5_tipki"]
-[ext_resource type="Script" uid="uid://dvn6a2wdp1ob2" path="res://particle_system/collectors/XYDestructor.cs" id="6_tipki"]
 [ext_resource type="Script" uid="uid://x8n2uy3nj8xg" path="res://particle_system/emitters/WallEmitter.cs" id="9_85g3d"]
+[ext_resource type="PackedScene" uid="uid://dlaml7eykabo3" path="res://particle_system/collectors/eraser/Eraser.tscn" id="10_eb6dy"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tipki"]
 width = 1024
@@ -19,9 +20,10 @@ height = 1024
 script = ExtResource("1_jyhfs")
 timestep = 0.1
 
-[node name="Economy" type="Node" parent="." node_paths=PackedStringArray("score")]
+[node name="Economy" type="Node" parent="." node_paths=PackedStringArray("packetsText", "spamText")]
 script = ExtResource("2_o6xl0")
-score = NodePath("../CanvasLayer/Interface/Score")
+packetsText = NodePath("../UI/Interface/Packets")
+spamText = NodePath("../UI/Interface/Spam")
 
 [node name="RenderSim" type="TextureRect" parent="."]
 texture_filter = 1
@@ -32,36 +34,51 @@ texture = SubResource("NoiseTexture2D_tipki")
 script = ExtResource("2_nplto")
 spriteScene = ExtResource("5_choun")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="."]
 
-[node name="Interface" type="Control" parent="CanvasLayer"]
+[node name="Interface" type="Control" parent="UI"]
 layout_mode = 3
 anchors_preset = 0
 offset_left = 1024.0
 offset_right = 1920.0
 offset_bottom = 1080.0
 
-[node name="ScoreLabel" type="RichTextLabel" parent="CanvasLayer/Interface"]
+[node name="PacketsLabel" type="RichTextLabel" parent="UI/Interface"]
 layout_mode = 0
-offset_right = 362.0
+offset_right = 412.0
 offset_bottom = 140.0
 theme_override_fonts/normal_font = ExtResource("5_tipki")
 theme_override_font_sizes/normal_font_size = 96
-text = "Score"
+text = "Packets"
 
-[node name="Score" type="RichTextLabel" parent="CanvasLayer/Interface"]
+[node name="Packets" type="RichTextLabel" parent="UI/Interface"]
 layout_mode = 0
-offset_left = 300.0
-offset_right = 662.0
+offset_left = 420.0
+offset_right = 782.0
 offset_bottom = 140.0
 theme_override_fonts/normal_font = ExtResource("5_tipki")
 theme_override_font_sizes/normal_font_size = 96
 text = "000"
 
-[node name="XYDestructor" type="Node" parent="."]
-script = ExtResource("6_tipki")
-Radius = 16
-Cooldown = 0.5
+[node name="SpamLabel" type="RichTextLabel" parent="UI/Interface"]
+layout_mode = 0
+offset_top = 128.0
+offset_right = 362.0
+offset_bottom = 268.0
+theme_override_fonts/normal_font = ExtResource("5_tipki")
+theme_override_font_sizes/normal_font_size = 96
+text = "Spam
+"
+
+[node name="Spam" type="RichTextLabel" parent="UI/Interface"]
+layout_mode = 0
+offset_left = 420.0
+offset_top = 128.0
+offset_right = 782.0
+offset_bottom = 268.0
+theme_override_fonts/normal_font = ExtResource("5_tipki")
+theme_override_font_sizes/normal_font_size = 96
+text = "000"
 
 [node name="RectangularEmitter" parent="." instance=ExtResource("2_choun")]
 SpawnInterval = 0.2
@@ -70,21 +87,34 @@ weights = Dictionary[int, int]({
 2: 99,
 3: 1
 })
-Width = 1024
-Height = 48
+GridSize = Vector2i(64, 2)
+DebugColor = Color(0.255375, 0.503225, 1, 0.5)
 
 [node name="Server" parent="." instance=ExtResource("5_tbgi4")]
-position = Vector2(384, 769)
-PacketsToCollect = 16
-Width = 256
-Height = 256
+position = Vector2(384, 768)
+GridPosition = Vector2i(24, 48)
+GridSize = Vector2i(16, 16)
+DebugColor = Color(0, 1, 0, 0.501961)
+
+[node name="SpamEater" parent="." instance=ExtResource("2_ya4ey")]
+position = Vector2(384, 160)
+GridPosition = Vector2i(24, 10)
+GridSize = Vector2i(16, 24)
+DebugColor = Color(1, 1, 0, 0.501961)
+
+[node name="Eraser" parent="." instance=ExtResource("10_eb6dy")]
+position = Vector2(0, 1008)
+GridPosition = Vector2i(0, 63)
+GridSize = Vector2i(64, 1)
 
 [node name="Wall_01" type="Polygon2D" parent="."]
+visible = false
 color = Color(0, 1, 1, 0.105882)
 polygon = PackedVector2Array(-8, 112, 399, 1077, -6, 718)
 script = ExtResource("9_85g3d")
 
 [node name="Wall_02" type="Polygon2D" parent="."]
+visible = false
 color = Color(0, 1, 1, 0.105882)
 polygon = PackedVector2Array(1019, 142, 618, 1076, 1019, 787)
 script = ExtResource("9_85g3d")
