@@ -96,6 +96,7 @@ texture_normal = ExtResource("7_eb6dy")
 stretch_mode = 0
 script = ExtResource("9_a8y0u")
 wallType = 2
+_size = 5
 worldObjectToBuild = ExtResource("10_jkv2x")
 
 [node name="WallDes" type="TextureButton" parent="UI/Interface"]
@@ -129,6 +130,7 @@ GridSize = Vector2i(16, 16)
 DebugColor = Color(0, 1, 0, 0.501961)
 
 [node name="SpamEater" parent="." instance=ExtResource("2_ya4ey")]
+visible = false
 
 [node name="Eraser" parent="." instance=ExtResource("10_eb6dy")]
 position = Vector2(0, 1008)
