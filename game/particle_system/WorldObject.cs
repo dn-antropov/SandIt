@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 [Tool]
@@ -37,6 +38,17 @@ public partial class WorldObject : Node2D
         }
     }
 
+    private bool bMoving = false;
+
+    public void Move()
+    {
+        bMoving = true;
+    }
+
+    public virtual void Place()
+    {
+        bMoving = false;
+    }
     public override void _Draw()
     {
         // if (Engine.IsEditorHint())
@@ -45,5 +57,24 @@ public partial class WorldObject : Node2D
             var rect = new Rect2(new Vector2(0, 0), (Vector2)_gridSize * Common.pixelScale);
             DrawRect(rect, _debugColor, true);
         }
+    }
+
+    public override void _Process(double delta)
+    {
+        if (bMoving)
+        {
+            var mousePosition = GetViewport().GetMousePosition();
+            mousePosition /= Common.pixelScale;
+            mousePosition = mousePosition.Floor();
+            mousePosition *= Common.pixelScale;
+            SetPosition(mousePosition);
+        }
+    }
+
+    public bool CanBeBuilt()
+    {
+        Vector2 scaledPosition = Position / Common.pixelScale;
+        return Common.main.IsInBounds((Vector2I)scaledPosition);
+
     }
 }

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c17hfwyg2nb7a"
-path="res://.godot/imported/T_Bug_.svg-81d685c148f3ef72232d787c5e956bf3.ctex"
+uid="uid://b2dcpbnv411x8"
+path="res://.godot/imported/T_Spam.svg-78954c569ba587fdf5dee344eda2b0a1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://particle_system/packets/textures/T_Bug_.svg"
-dest_files=["res://.godot/imported/T_Bug_.svg-81d685c148f3ef72232d787c5e956bf3.ctex"]
+source_file="res://particle_system/packets/textures/T_Spam.svg"
+dest_files=["res://.godot/imported/T_Spam.svg-78954c569ba587fdf5dee344eda2b0a1.ctex"]
 
 [params]
 

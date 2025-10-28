@@ -14,3 +14,5 @@ game/addons
 
 .vscode/settings.json
 .idea
+
+*.TMP

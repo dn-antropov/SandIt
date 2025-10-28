@@ -1,9 +1,8 @@
 using Godot;
 using System;
-using System.Security.Principal;
 
 [Tool]
-public partial class RectangularEmitter : WorldObject
+public partial class PacketsEmitter : WorldObject
 {
     private double elapsedTime = 0;
 

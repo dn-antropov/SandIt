@@ -5,8 +5,8 @@ public partial class Eraser : WorldObject
 {
     private double elapsedTime = 0;
     // Seconds
-    [Export]
-    public double CollectInterval = 1;
+    // [Export]
+    // private double CollectInterval = Common.main.timestep;
 
     public override void _Process(double delta)
     {
@@ -14,9 +14,12 @@ public partial class Eraser : WorldObject
             return;
 
         base._Process(delta);
-        elapsedTime += delta;
 
-        if (elapsedTime > CollectInterval)
+        if (Common.main == null)
+            return;
+
+        elapsedTime += delta;
+        if (elapsedTime > Common.main.timestep)
         {
             ErasePackets(_gridPosition.X, _gridPosition.Y, _gridSize.X, _gridSize.Y);
             elapsedTime = 0;
@@ -30,7 +33,6 @@ public partial class Eraser : WorldObject
             for (int py = y; py < (y + height); py++)
             {
                 int type = ErasePacket(new Vector2I(px, py));
-                GD.Print(new Vector2I(px, py));
             }
         }
     }

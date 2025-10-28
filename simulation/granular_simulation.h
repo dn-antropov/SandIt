@@ -54,6 +54,7 @@ public:
 	bool is_in_bounds(int row, int col);
 	bool is_swappable(int rowA, int colA, int rowB, int colB);
 	void process_block(int start_row, int start_col, int block_size);
+	int get_packet_type(int row, int col);
 
 	float randf();
 

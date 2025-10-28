@@ -6,7 +6,7 @@
    fill="#ffffff"
    version="1.1"
    id="svg1"
-   sodipodi:docname="T_Packet.svg"
+   sodipodi:docname="T_Spam.svg"
    inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,7 +25,7 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="42.8"
      inkscape:cx="10.011682"
-     inkscape:cy="10.023364"
+     inkscape:cy="10"
      inkscape:window-width="1920"
      inkscape:window-height="1058"
      inkscape:window-x="-6"
@@ -33,7 +33,7 @@
      inkscape:window-maximized="1"
      inkscape:current-layer="svg1" />
   <rect
-     style="fill:#00ff99;fill-opacity:1;fill-rule:nonzero;stroke-width:36.289"
+     style="fill:#ff001d;fill-opacity:1;fill-rule:nonzero;stroke-width:36.289"
      id="rect1"
      width="576"
      height="576"

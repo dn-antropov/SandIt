@@ -10,6 +10,12 @@ public partial class Server : WorldObject
     [Export]
     public int PacketsToCollect = 10;
 
+    public override void _Ready()
+    {
+        base._Ready();
+        CallDeferred("BuildTheWalls");
+    }
+
     public override void _Process(double delta)
     {
         if (Engine.IsEditorHint())
@@ -20,7 +26,8 @@ public partial class Server : WorldObject
 
         if (elapsedTime > CollectInterval)
         {
-            CollectNPackets(_gridPosition.X, _gridPosition.Y, _gridSize.X, _gridSize.Y, PacketsToCollect);
+            // Take care about not collecting walls
+            CollectNPackets(_gridPosition.X + 1, _gridPosition.Y, _gridSize.X - 2, _gridSize.Y - 1, PacketsToCollect);
             elapsedTime = 0;
         }
     }
@@ -31,7 +38,9 @@ public partial class Server : WorldObject
         int spam = 0;
         for (int p = 0; p < N; p++)
         {
-            Vector2I position = new Vector2I(GD.RandRange(x, x + width), GD.RandRange(y, y + height));
+            Vector2I position = new Vector2I(GD.RandRange(x, x + width - 1), GD.RandRange(y, y + height - 1));
+            // if ((Common.PacketType)Common.main.GetPacketType(position) == Common.PacketType.Wall)
+            //     return;
             int type = CollectPacket(position);
             if (type == (int)Common.PacketType.Basic)
             {
@@ -64,5 +73,22 @@ public partial class Server : WorldObject
     private int CollectPacket(Vector2I position)
     {
         return Common.main.Erase(position);
+    }
+
+    private void BuildTheWalls()
+    {
+        for (int y = 0; y < _gridSize.Y; y++)
+        {
+            Vector2I pos = new Vector2I(_gridPosition.X, _gridPosition.Y + y);
+            Common.main.Draw(pos, (int)Common.PacketType.Wall);
+
+            pos = new Vector2I(_gridPosition.X + _gridSize.X - 1, _gridPosition.Y + y);
+            Common.main.Draw(pos, (int)Common.PacketType.Wall);
+        }
+        for (int x = 1; x < _gridSize.X - 1; x++)
+        {
+            Vector2I pos = new Vector2I(_gridPosition.X + x, _gridPosition.Y + _gridSize.Y - 1);
+            Common.main.Draw(pos, (int)Common.PacketType.Wall);
+        }
     }
 }

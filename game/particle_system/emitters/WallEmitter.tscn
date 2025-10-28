@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://fnfcuaxgy5rd"]
+
+[ext_resource type="Script" uid="uid://x8n2uy3nj8xg" path="res://particle_system/emitters/WallEmitter.cs" id="1_6sbur"]
+
+[node name="WallEmitter" type="Node2D"]
+script = ExtResource("1_6sbur")
+GridSize = Vector2i(1, 10)

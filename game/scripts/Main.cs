@@ -70,4 +70,9 @@ public partial class Main : Node
 	{
 		simulation.AsGodotObject().Call("step", iterations);
 	}
+
+	public int GetPacketType(Vector2I pos)
+    {
+		return simulation.AsGodotObject().Call("get_packet_type").AsInt32();
+    }
 }

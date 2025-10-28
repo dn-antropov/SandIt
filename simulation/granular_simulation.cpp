@@ -237,25 +237,8 @@ TypedArray<Vector4> GranularSimulation::get_interpolated_render_data(float alpha
                 int curr_row = row;
                 int curr_col = col;
                 float interp_row, interp_col;
-                // if (prev_row!= curr_row && prev_col != curr_col) {
-                //     if (alpha <= 0.5) {
-                //         float horizontal_alpha = alpha * 2;
-                //         horizontal_alpha = pow(horizontal_alpha, 1.2);
-                //         interp_col = prev_col + horizontal_alpha * (curr_col - prev_col);
-                //         interp_row = prev_row;
-
-                //     } else {
-                //         float vertical_alpha = (alpha - 0.5) * 2;
-                //         vertical_alpha = pow(vertical_alpha, 1.2);
-                //         interp_col = curr_col;
-                //         interp_row = prev_row + vertical_alpha * (curr_row - prev_row);
-
-                //     }
-                // } else {
-                    interp_col = prev_col + alpha * (curr_col - prev_col);
-                    interp_row = prev_row + alpha * (curr_row - prev_row);
-                // }
-
+                interp_col = prev_col + alpha * (curr_col - prev_col);
+                interp_row = prev_row + alpha * (curr_row - prev_row);
 
                 // Convert to render space
                 float render_x = (interp_col + 0.5f) * render_scale;
@@ -263,8 +246,6 @@ TypedArray<Vector4> GranularSimulation::get_interpolated_render_data(float alpha
 
                 packets_to_render.set(packet->id, Vector4(float(packet->id), float(packet->type), render_x, render_y));
             }
-
-
         }
     }
 
@@ -305,6 +286,11 @@ void GranularSimulation::simplify_outlines() {
     }
 }
 
+int GranularSimulation::get_packet_type(int row, int col)
+{
+    return packets[row * width + col]->type;
+}
+
 void GranularSimulation::_bind_methods() {
     ClassDB::bind_method(D_METHOD("step"), &GranularSimulation::step);
     ClassDB::bind_method(D_METHOD("create_particle"), &GranularSimulation::create_packet);
@@ -315,4 +301,5 @@ void GranularSimulation::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_outlines"), &GranularSimulation::get_outlines);
     ClassDB::bind_method(D_METHOD("get_simplified_outlines"), &GranularSimulation::get_simplified_outlines);
     ClassDB::bind_method(D_METHOD("is_in_bounds"), &GranularSimulation::is_in_bounds);
+    ClassDB::bind_method(D_METHOD("get_paket_type"), &GranularSimulation::get_packet_type);
 }

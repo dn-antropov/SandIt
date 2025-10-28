@@ -8,8 +8,7 @@ class Wall: public Packet {
 public:
     Wall() {
         type = PacketType::EWall;
-        density = 999;
+        density = 666;
     }
-
     void update(GranularSimulation *sim, int row, int col) override {}
 };
